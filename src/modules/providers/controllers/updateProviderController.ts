@@ -6,7 +6,7 @@ export const updateOne = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, email, tel } = req.body;
 
-  if (!name || !email || !tel) {
+  if (!name && !email && !tel) {
     return res.status(400).json({ error: 'Incomplete data' });
   }
 
@@ -16,21 +16,33 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const hasProviderByEmail = await getProviderService.findByEmail(email);
+  if (email) {
+    const hasProviderByEmail = await getProviderService.findByEmail(email);
 
   if (hasProviderByEmail.length > 0) {
     return res.status(400).json({ error: 'Provider with this e-mail already exists' });
   }
+  }
 
-  const hasProviderByTel = await getProviderService.findByTel(tel);
+  if (tel) {
+    const hasProviderByTel = await getProviderService.findByTel(tel);
 
   if (hasProviderByTel.length > 0) {
     return res.status(400).json({ error: 'Provider with this tel already exists' });
   }
+  }
 
   const time = new Date().toISOString();
 
-  const providerUpdated = await updateProviderService.update(id, name, email, tel, time);
+  const providerUpdated = await updateProviderService.update({
+    id,
+    data: {
+      name,
+      email,
+      tel
+    },
+    time
+  });
 
   if (!providerUpdated) {
     return res.status(500).json({ error: 'Internal server error' });

@@ -1,14 +1,19 @@
 import { prisma } from "../../../database/prismaClient";
+import { UpdateProvider } from "../../../types/Provider";
+
+type UpdateProviderParams = {
+  id: string;
+  data: UpdateProvider;
+  time: string
+}
 
 export const updateProviderService = {
 
-  update: async (id: string, name: string, email: string, tel: string, time: string) => {
+  update: async ({ id, data, time }: UpdateProviderParams) => {
     return await prisma.provider.update({
       where: { id },
       data: {
-        name,
-        email,
-        tel,
+        ...data,
         updated_at: time
       }
     });
