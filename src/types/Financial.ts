@@ -5,3 +5,9 @@ export type Financial = {
   user: string;
   value: number;
 }
+
+export type UpdateFinancial = {
+  type?: number;
+  unity_id?: string;
+  value?: number;
+}

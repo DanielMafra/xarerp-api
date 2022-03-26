@@ -6,10 +6,14 @@ import { updateFinancialService } from '../services/updateFinancialService';
 
 export const updateOne = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { type, unity, user, value } = req.body;
+  const { type, unity, value } = req.body;
 
-  if ((type !== 0 && type !== 1) || !unity || !user || !value) {
+  if ((type !== 0 && type !== 1) && !unity && !value) {
     return res.status(400).json({ error: 'Incomplete data' });
+  }
+
+  if (type !== 0 && type !== 1) {
+    return res.status(400).json({ error: 'Invalid type' });
   }
 
   const financial = await getFinancialService.findOne(id);
@@ -18,21 +22,24 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const hasStore = await getStoreService.findOne(unity);
+  if (unity) {
+    const hasStore = await getStoreService.findOne(unity);
 
   if (!hasStore) {
     return res.status(404).json({ error: 'Store not found' });
   }
-
-  const hasUser = await getUserService.findOne(user);
-
-  if (!hasUser) {
-    return res.status(404).json({ error: 'User not found' });
   }
 
   const time = new Date().toISOString();
 
-  const financialUpdated = await updateFinancialService.update(id, type, unity, user, value, time);
+  const financialUpdated = await updateFinancialService.update({
+    id,
+    data: {
+      type,
+      unity_id: unity
+    },
+    time
+  });
 
   if (!financialUpdated) {
     return res.status(500).json({ error: 'Internal server error' });
