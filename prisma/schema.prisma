@@ -1,0 +1,192 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id         String   @id @default(uuid())
+  title      String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  products Product[]
+  @@map("categories")
+}
+
+model Carrier {
+  id         String   @id @default(uuid())
+  name       String   @unique
+  region     String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  sales Sale[]
+  @@map("carriers")
+}
+
+model Store {
+  id         String   @id @default(uuid())
+  name       String
+  type       String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  users     User[]
+  products  Product[]
+  clients   Client[]
+  tickets   Ticket[]
+  financial Financial[]
+  purchases Purchase[]
+  sales     Sale[]
+  @@map("stores")
+}
+
+model Provider {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  tel        String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  products  Product[]
+  purchases Purchase[]
+  @@map("providers")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  password    String
+  unity_id    String
+  position    String
+  permissions String
+  active      Boolean
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  unity Store @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  products  Product[]
+  sellers   Seller[]
+  clients   Client[]
+  tickets   Ticket[]
+  financial Financial[]
+  purchases Purchase[]
+  @@map("users")
+}
+
+model Product {
+  id             String   @id @default(uuid())
+  name           String
+  description    String
+  purchase_price Int
+  sale_price     Int
+  category_id    String
+  unity_id       String
+  provider_id    String
+  user_id        String
+  lot            Int
+  validity       DateTime
+  quantity       Int
+  created_at     DateTime @default(now())
+  updated_at     DateTime @default(now())
+  category Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  unity    Store    @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  provider Provider @relation(fields: [provider_id], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  purchases Purchase[]
+  sales     Sale[]
+  @@map("products")
+}
+
+model Seller {
+  id         String   @id @default(uuid())
+  user_id    String
+  commission Int
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  sales Sale[]
+  @@map("sellers")
+}
+
+model Client {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  tel        String   @unique
+  cep        String
+  city       String
+  state      String
+  user_id    String
+  unity_id   String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  unity Store @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  sales Sale[]
+  @@map("clients")
+}
+
+model Ticket {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  unity_id    String
+  user_id     String
+  status      Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  unity Store @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  @@map("tickets")
+}
+
+model Financial {
+  id         String   @id @default(uuid())
+  type       Int
+  unity_id   String
+  user_id    String
+  value      Int
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  unity Store @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  @@map("financial")
+}
+
+model Purchase {
+  id          String   @id @default(uuid())
+  user_id     String
+  unity_id    String
+  provider_id String
+  product_id  String
+  quantity    Int
+  unit_price  Int
+  status      Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  unity    Store    @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  provider Provider @relation(fields: [provider_id], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  @@map("purchases")
+}
+
+model Sale {
+  id         String   @id @default(uuid())
+  product_id String
+  unity_id   String
+  client_id  String
+  seller_id  String
+  carrier_id String
+  status     Int
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  unity   Store   @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  client  Client  @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  seller  Seller  @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  carrier Carrier @relation(fields: [carrier_id], references: [id], onDelete: Cascade)
+  @@map("sales")
+}
