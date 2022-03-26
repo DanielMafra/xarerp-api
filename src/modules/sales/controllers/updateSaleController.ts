@@ -11,7 +11,7 @@ export const updateOne = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { product, unity, client, seller, carrier, status } = req.body;
 
-  if (!product || !unity || !client || !seller || !carrier || status === '') {
+  if (!product && !unity && !client && !seller && !carrier && status === '') {
     return res.status(400).json({ error: 'Incomplete data' });
   }
 
@@ -21,39 +21,60 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const hasProduct = await getProductService.findOne(product);
+  if (product) {
+    const hasProduct = await getProductService.findOne(product);
 
   if (!hasProduct) {
     return res.status(404).json({ error: 'Product not found' });
   }
+  }
 
-  const hasStore = await getStoreService.findOne(unity);
+  if (unity) {
+    const hasStore = await getStoreService.findOne(unity);
 
   if (!hasStore) {
     return res.status(404).json({ error: 'Store not found' });
   }
+  }
 
-  const hasClient = await getClientService.findOne(client);
+  if (client) {
+    const hasClient = await getClientService.findOne(client);
 
   if (!hasClient) {
     return res.status(404).json({ error: 'Client not found' });
   }
+  }
 
-  const hasSeller = await getSellerService.findOne(seller);
+  if (seller) {
+    const hasSeller = await getSellerService.findOne(seller);
 
   if (!hasSeller) {
     return res.status(404).json({ error: 'Seller not found' });
   }
+  }
 
-  const hasCarrier = await getCarrierService.findOne(carrier);
+  if (carrier) {
+    const hasCarrier = await getCarrierService.findOne(carrier);
 
   if (!hasCarrier) {
     return res.status(404).json({ error: 'Carrier not found' });
   }
+  }
 
   const time = new Date().toISOString();
 
-  const saleUpdated = await updateSaleService.update(id, product, unity, client, seller, carrier, status, time);
+  const saleUpdated = await updateSaleService.update({
+    id,
+    data: {
+      product_id: product,
+      unity_id: unity,
+      client_id: client,
+      seller_id: seller,
+      carrier_id: carrier,
+      status
+    },
+    time
+  });
 
   if (!saleUpdated) {
     return res.status(500).json({ error: 'Internal server error' });

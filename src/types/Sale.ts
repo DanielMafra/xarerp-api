@@ -7,3 +7,12 @@ export type Sale = {
   carrier: string;
   status: number;
 }
+
+export type UpdateSale = {
+  product_id?: string;
+  unity_id?: string;
+  client_id?: string;
+  seller_id?: string;
+  carrier_id?: string;
+  status?: number;
+}
