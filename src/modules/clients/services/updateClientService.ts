@@ -1,27 +1,19 @@
 import { prisma } from "../../../database/prismaClient";
+import { UpdateClient } from "../../../types/Client";
+
+type UpdateClientParams = {
+  id: string;
+  data: UpdateClient;
+  time: string
+}
 
 export const updateClientService = {
 
-  update: async (id: string, name: string, email: string, tel: string, cep: string, city: string, state: string, unity: string, user: string, time: string) => {
+  update: async ({ id, data, time }: UpdateClientParams) => {
     return await prisma.client.update({
       where: { id },
       data: {
-        name,
-        email,
-        tel,
-        cep,
-        city,
-        state,
-        unity: {
-          connect: {
-            id: unity
-          }
-        },
-        user: {
-          connect: {
-            id: user
-          }
-        },
+        ...data,
         updated_at: time
       }
     });

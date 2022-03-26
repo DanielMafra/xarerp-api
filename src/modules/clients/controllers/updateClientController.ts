@@ -6,9 +6,9 @@ import { updateClientService } from '../services/updateClientService';
 
 export const updateOne = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { name, email, tel, cep, city, state, unity, user } = req.body;
+  const { name, email, tel, cep, city, state, unity } = req.body;
 
-  if (!name || !email || !tel || !cep || !city || !state || !unity || !user) {
+  if (!name && !email && !tel && !cep && !city && !state && !unity) {
     return res.status(400).json({ error: 'Incomplete data' });
   }
 
@@ -18,33 +18,45 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const hasClientByEmail = await getClientService.findByEmail(email);
+  if (email) {
+    const hasClientByEmail = await getClientService.findByEmail(email);
 
   if (hasClientByEmail.length > 0) {
     return res.status(400).json({ error: 'Client with this e-mail already exists' });
   }
+  }
 
-  const hasClientByTel = await getClientService.findByTel(tel);
+  if (tel) {
+    const hasClientByTel = await getClientService.findByTel(tel);
 
   if (hasClientByTel.length > 0) {
     return res.status(400).json({ error: 'Provider with this tel already exists' });
   }
-
-  const hasUser = await getUserService.findOne(user);
-
-  if (!hasUser) {
-    return res.status(404).json({ error: 'User not found' });
   }
 
-  const hasStore = await getStoreService.findOne(unity);
+  if (unity) {
+    const hasStore = await getStoreService.findOne(unity);
 
   if (!hasStore) {
     return res.status(404).json({ error: 'Store not found' });
   }
+  }
 
   const time = new Date().toISOString();
 
-  const clientUpdated = await updateClientService.update(id, name, email, tel, cep, city, state, unity, user, time);
+  const clientUpdated = await updateClientService.update({
+    id,
+    data: {
+      name,
+      email,
+      tel,
+      cep,
+      city,
+      state,
+      unity_id: unity
+    },
+    time
+  });
 
   if (!clientUpdated) {
     return res.status(500).json({ error: 'Internal server error' });
