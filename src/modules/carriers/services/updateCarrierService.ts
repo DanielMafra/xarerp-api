@@ -1,13 +1,19 @@
 import { prisma } from "../../../database/prismaClient";
+import { UpdateCarrier } from "../../../types/Carrier";
+
+type UpdateCarrierParams = {
+  id: string;
+  data: UpdateCarrier;
+  time: string
+}
 
 export const updateCarrierService = {
 
-  update: async (id: string, name: string, region: string, time: string) => {
+  update: async ({ id, data, time }: UpdateCarrierParams) => {
     return await prisma.carrier.update({
       where: { id },
       data: {
-        name,
-        region,
+        ...data,
         updated_at: time
       }
     });

@@ -3,3 +3,8 @@ export type Carrier = {
   name: string;
   region: string;
 }
+
+export type UpdateCarrier = {
+  name?: string;
+  region?: string;
+}
