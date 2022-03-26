@@ -1,7 +1,7 @@
 import { prisma } from "../../../database/prismaClient";
 import { UpdateProduct } from "../../../types/Product";
 
-type UpdateFinancialParams = {
+type UpdateProductParams = {
   id: string;
   data: UpdateProduct;
   time: string
@@ -9,7 +9,7 @@ type UpdateFinancialParams = {
 
 export const updateProductService = {
 
-  update: async ({ id, data, time }: UpdateFinancialParams) => {
+  update: async ({ id, data, time }: UpdateProductParams) => {
     return await prisma.product.update({
       where: { id },
       data: {
