@@ -1,38 +1,19 @@
 import { prisma } from "../../../database/prismaClient";
+import { UpdateProduct } from "../../../types/Product";
+
+type UpdateFinancialParams = {
+  id: string;
+  data: UpdateProduct;
+  time: string
+}
 
 export const updateProductService = {
 
-  update: async (id: string, name: string, description: string, purchase_price: number, sale_price: number, category: string, unity: string, provider: string, user: string, lot: number, validity: Date, quantity: number, time: string) => {
+  update: async ({ id, data, time }: UpdateFinancialParams) => {
     return await prisma.product.update({
       where: { id },
       data: {
-        name,
-        description,
-        purchase_price,
-        sale_price,
-        category: {
-          connect: {
-            id: category
-          }
-        },
-        unity: {
-          connect: {
-            id: unity
-          }
-        },
-        provider: {
-          connect: {
-            id: provider
-          }
-        },
-        user: {
-          connect: {
-            id: user
-          }
-        },
-        lot,
-        validity,
-        quantity,
+        ...data,
         updated_at: time
       }
     });

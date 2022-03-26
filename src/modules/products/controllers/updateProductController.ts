@@ -8,9 +8,9 @@ import { getUserService } from '../../users/services/getUserService';
 
 export const updateOne = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { name, description, purchase_price, sale_price, category, unity, provider, user, lot, validity, quantity } = req.body;
+  const { name, description, purchase_price, sale_price, category, unity, provider, lot, validity, quantity } = req.body;
 
-  if (!name || !description || !purchase_price || !sale_price || !category || !unity || !provider || !user || !lot || !validity || !quantity) {
+  if (!name && !description && !purchase_price && !sale_price && !category && !unity && !provider && !lot && !validity && !quantity) {
     return res.status(400).json({ error: 'Incomplete data' });
   }
 
@@ -20,34 +20,49 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const hasCategory = await getCategoryService.findOne(category);
+  if (category) {
+    const hasCategory = await getCategoryService.findOne(category);
 
   if (!hasCategory) {
     return res.status(404).json({ error: 'Category not found' });
   }
+  }
 
-  const hasStore = await getStoreService.findOne(unity);
+  if (unity) {
+    const hasStore = await getStoreService.findOne(unity);
 
   if (!hasStore) {
     return res.status(404).json({ error: 'Store not found' });
   }
+  }
 
-  const hasProvider = await getProviderService.findOne(provider);
+  if (provider) {
+    const hasProvider = await getProviderService.findOne(provider);
 
   if (!hasProvider) {
     return res.status(404).json({ error: 'Provider not found' });
   }
-
-  const hasUser = await getUserService.findOne(user);
-
-  if (!hasUser) {
-    return res.status(404).json({ error: 'User not found' });
   }
 
   const time = new Date().toISOString();
   const validityToDate = new Date(validity);
 
-  const productUpdated = await updateProductService.update(id, name, description, purchase_price, sale_price, category, unity, provider, user, lot, validityToDate, quantity, time);
+  const productUpdated = await updateProductService.update({
+    id,
+    data: {
+      name,
+      description,
+      purchase_price,
+      sale_price,
+      category_id: category,
+      unity_id: unity,
+      provider_id: provider,
+      lot,
+      validity: validityToDate,
+      quantity
+    },
+    time
+  });
 
   if (!productUpdated) {
     return res.status(500).json({ error: 'Internal server error' });
