@@ -6,7 +6,7 @@ export const updateOne = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, type } = req.body;
 
-  if (!name || !type) {
+  if (!name && !type) {
     return res.status(400).json({ error: 'Incomplete data' });
   }
 
@@ -18,7 +18,14 @@ export const updateOne = async (req: Request, res: Response) => {
 
   const time = new Date().toISOString();
 
-  const storeUpdated = await updateStoreService.update(id, name, type, time);
+  const storeUpdated = await updateStoreService.update({
+    id,
+    data: {
+      name,
+      type
+    },
+    time
+  });
 
   if (!storeUpdated) {
     return res.status(500).json({ error: 'Internal server error' });

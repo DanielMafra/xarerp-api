@@ -1,13 +1,19 @@
 import { prisma } from "../../../database/prismaClient";
+import { UpdateStore } from "../../../types/Store";
+
+type UpdateStoreParams = {
+  id: string;
+  data: UpdateStore;
+  time: string
+}
 
 export const updateStoreService = {
 
-  update: async (id: string, name: string, type: string, time: string) => {
+  update: async ({ id, data, time }: UpdateStoreParams) => {
     return await prisma.store.update({
       where: { id },
       data: {
-        name,
-        type,
+        ...data,
         updated_at: time
       }
     });

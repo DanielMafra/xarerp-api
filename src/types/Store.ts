@@ -3,3 +3,8 @@ export type Store = {
   name: string;
   type: string;
 }
+
+export type UpdateStore = {
+  name?: string;
+  type?: string;
+}
