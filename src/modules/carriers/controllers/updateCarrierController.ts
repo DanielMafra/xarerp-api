@@ -16,7 +16,7 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  if (name) {
+  if (name && (name !== carrier.name)) {
     const hasCarrier = await getCarrierService.findByName(name);
 
   if (hasCarrier.length > 0) {

@@ -27,7 +27,7 @@ export const updateOne = async (req: Request, res: Response) => {
   }
   }
 
-  if (email) {
+  if (email && (email !== user.email)) {
     const hasUserByEmail = await getUserService.findByEmail(email);
 
   if (hasUserByEmail.length > 0) {

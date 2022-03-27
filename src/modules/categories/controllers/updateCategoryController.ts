@@ -16,10 +16,12 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const hasCategory = await getCategoryService.findByTitle(title);
+  if (title !== category.title) {
+    const hasCategory = await getCategoryService.findByTitle(title);
 
   if (hasCategory.length > 0) {
     return res.status(400).json({ error: 'Category already exists' });
+  }
   }
 
   const time = new Date().toISOString();

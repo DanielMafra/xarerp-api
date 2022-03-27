@@ -18,7 +18,7 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  if (email) {
+  if (email && (email !== client.email)) {
     const hasClientByEmail = await getClientService.findByEmail(email);
 
   if (hasClientByEmail.length > 0) {
@@ -26,7 +26,7 @@ export const updateOne = async (req: Request, res: Response) => {
   }
   }
 
-  if (tel) {
+  if (tel && (tel !== client.tel)) {
     const hasClientByTel = await getClientService.findByTel(tel);
 
   if (hasClientByTel.length > 0) {
