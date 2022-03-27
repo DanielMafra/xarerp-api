@@ -9,8 +9,7 @@ export const updateOne = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, email, password, position, permissions, active, unity } = req.body;
 
-  if (!name || !email || !password || !position || !permissions || (active !== false && active !== true) || !unity) {
-    console.log(`name: ${name}, email: ${email}, password: ${password}, position: ${position}, permissions: ${permissions}, active: ${active}, unity: ${unity}`);
+  if (!name && !email && !password && !position && !permissions && (active !== false && active !== true) && !unity) {
     return res.status(400).json({ error: 'Incomplete data' });
   }
 
@@ -20,22 +19,38 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const hasStore = await getStoreService.findOne(unity);
+  if (unity) {
+    const hasStore = await getStoreService.findOne(unity);
 
   if (!hasStore) {
     return res.status(404).json({ error: 'Store not found' });
   }
+  }
 
-  const hasUserByEmail = await getUserService.findByEmail(email);
+  if (email) {
+    const hasUserByEmail = await getUserService.findByEmail(email);
 
   if (hasUserByEmail.length > 0) {
     return res.status(400).json({ error: 'E-mail already exists' });
+  }
   }
 
   const time = new Date().toISOString();
   const hashPassword = await hash(password, 10);
 
-  const userUpdated = await updateUserService.update(id, name, email, hashPassword, position, permissions, active, unity, time);
+  const userUpdated = await updateUserService.update({
+    id,
+    data: {
+      name,
+      email,
+      password: hashPassword,
+      unity_id: unity,
+      position,
+      permissions,
+      active
+    },
+    time
+  });
 
   if (!userUpdated) {
     return res.status(500).json({ error: 'Internal server error' });

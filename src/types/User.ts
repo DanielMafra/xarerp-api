@@ -8,3 +8,13 @@ export type User = {
   permissions: string;
   active: boolean;
 }
+
+export type UpdateUser = {
+  name?: string;
+  email?: string;
+  password?: string;
+  unity_id?: string;
+  position?: string;
+  permissions?: string;
+  active?: boolean;
+}
