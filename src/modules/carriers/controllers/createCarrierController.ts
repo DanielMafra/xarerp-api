@@ -4,7 +4,8 @@ import { getCarrierService } from '../services/getCarrierService';
 import { v4 as uuidV4 } from 'uuid';
 
 export const create = async (req: Request, res: Response) => {
-  const { name, region } = req.body;
+  try {
+    const { name, region } = req.body;
 
   if (!name || !region) {
     return res.status(400).json({ error: 'Incomplete data' });
@@ -27,4 +28,8 @@ export const create = async (req: Request, res: Response) => {
   }
 
   return res.status(201).json({ carrier });
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ error: 'InternalServerError' });
+  }
 }

@@ -3,7 +3,8 @@ import { deleteCarrierService } from '../services/deleteCarrierService';
 import { getCarrierService } from '../services/getCarrierService';
 
 export const deleteOne = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
   const carrier = await getCarrierService.findOne(id);
 
@@ -14,4 +15,8 @@ export const deleteOne = async (req: Request, res: Response) => {
   await deleteCarrierService.delete(id);
 
   return res.status(200).json({ status: true });
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ error: 'InternalServerError' });
+  }
 }

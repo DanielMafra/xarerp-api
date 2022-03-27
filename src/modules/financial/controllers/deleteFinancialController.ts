@@ -3,15 +3,20 @@ import { getFinancialService } from '../services/getFinancialService';
 import { deleteFinancialService } from '../services/deleteFinancialService';
 
 export const deleteOne = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const financial = await getFinancialService.findOne(id);
+    const financial = await getFinancialService.findOne(id);
 
-  if (!financial) {
-    return res.status(404).json({ error: 'Not found' });
+    if (!financial) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+
+    await deleteFinancialService.delete(id);
+
+    return res.status(200).json({ status: true });
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ error: 'InternalServerError' });
   }
-
-  await deleteFinancialService.delete(id);
-
-  return res.status(200).json({ status: true });
 }
