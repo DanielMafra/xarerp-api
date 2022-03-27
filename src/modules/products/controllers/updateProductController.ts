@@ -4,7 +4,6 @@ import { updateProductService } from '../services/updateProductService';
 import { getCategoryService } from '../../categories/services/getCategoryService';
 import { getStoreService } from '../../stores/services/getStoreService';
 import { getProviderService } from '../../providers/services/getProviderService';
-import { getUserService } from '../../users/services/getUserService';
 
 export const updateOne = async (req: Request, res: Response) => {
   try {

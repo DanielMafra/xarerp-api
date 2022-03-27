@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { updateUserService } from '../services/updateUserService';
 import { getUserService } from '../services/getUserService';
 import { getStoreService } from '../../stores/services/getStoreService';
-import { v4 as uuidV4 } from 'uuid';
 import { hash } from 'bcrypt';
 
 export const updateOne = async (req: Request, res: Response) => {

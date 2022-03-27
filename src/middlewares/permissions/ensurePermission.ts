@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { decode, verify } from 'jsonwebtoken';
 import { getUserService } from '../../modules/users/services/getUserService';
 
-function can(role: string) {
+function can (role: string) {
   const roleAuthorized = async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.userId;
     const hasUser = await getUserService.findOne(userId);

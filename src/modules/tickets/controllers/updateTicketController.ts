@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { getTicketService } from '../services/getTicketService';
 import { getStoreService } from '../../stores/services/getStoreService';
-import { getUserService } from '../../users/services/getUserService';
 import { updateTicketService } from '../services/updateTicketService';
 
 export const updateOne = async (req: Request, res: Response) => {

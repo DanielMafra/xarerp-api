@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { getFinancialService } from '../services/getFinancialService';
 import { getStoreService } from '../../stores/services/getStoreService';
-import { getUserService } from '../../users/services/getUserService';
 import { updateFinancialService } from '../services/updateFinancialService';
 
 export const updateOne = async (req: Request, res: Response) => {

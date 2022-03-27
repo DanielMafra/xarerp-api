@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { getClientService } from '../services/getClientService';
-import { getUserService } from '../../users/services/getUserService';
 import { getStoreService } from '../../stores/services/getStoreService';
 import { updateClientService } from '../services/updateClientService';
 
