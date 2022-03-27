@@ -1,24 +1,19 @@
 import { prisma } from "../../../database/prismaClient";
+import { UpdateTicket } from "../../../types/Ticket";
+
+type UpdateTicketParams = {
+  id: string;
+  data: UpdateTicket;
+  time: string
+}
 
 export const updateTicketService = {
 
-  update: async (id: string, title: string, description: string, unity: string, user: string, status: number, time: string) => {
+  update: async ({ id, data, time }: UpdateTicketParams) => {
     return await prisma.ticket.update({
       where: { id },
       data: {
-        title,
-        description,
-        unity: {
-          connect: {
-            id: unity
-          }
-        },
-        user: {
-          connect: {
-            id: user
-          }
-        },
-        status,
+        ...data,
         updated_at: time
       }
     });

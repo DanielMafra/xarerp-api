@@ -6,9 +6,9 @@ import { updateTicketService } from '../services/updateTicketService';
 
 export const updateOne = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { title, description, unity, user, status } = req.body;
+  const { title, description, unity, status } = req.body;
 
-  if (!title || !description || !unity || !user || !status) {
+  if (!title && !description && !unity && !status) {
     return res.status(400).json({ error: 'Incomplete data' });
   }
 
@@ -18,21 +18,26 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const hasStore = await getStoreService.findOne(unity);
+  if (unity) {
+    const hasStore = await getStoreService.findOne(unity);
 
   if (!hasStore) {
     return res.status(404).json({ error: 'Store not found' });
   }
-
-  const hasUser = await getUserService.findOne(user);
-
-  if (!hasUser) {
-    return res.status(404).json({ error: 'User not found' });
   }
 
   const time = new Date().toISOString();
 
-  const ticketUpdated = await updateTicketService.update(id, title, description, unity, user, status, time);
+  const ticketUpdated = await updateTicketService.update({
+    id,
+    data: {
+      title,
+      description,
+      unity_id: unity,
+      status
+    },
+    time
+  });
 
   if (!ticketUpdated) {
     return res.status(500).json({ error: 'Internal server error' });
