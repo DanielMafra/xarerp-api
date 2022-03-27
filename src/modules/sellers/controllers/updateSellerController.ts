@@ -7,7 +7,7 @@ export const updateOne = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { comission, user } = req.body;
 
-  if (!comission || !user) {
+  if (!comission && !user) {
     return res.status(400).json({ error: 'Incomplete data' });
   }
 
@@ -17,15 +17,24 @@ export const updateOne = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Not found' });
   }
 
-  const hasUser = await getUserService.findOne(user);
+  if (user) {
+    const hasUser = await getUserService.findOne(user);
 
   if (!hasUser) {
     return res.status(404).json({ error: 'User not found' });
   }
+  }
 
   const time = new Date().toISOString();
 
-  const sellerUpdated = await updateSellerService.update(id, comission, user, time);
+  const sellerUpdated = await updateSellerService.update({
+    id,
+    data: {
+      user_id: user,
+      comission
+    },
+    time
+  });
 
   if (!sellerUpdated) {
     return res.status(500).json({ error: 'Internal server error' });
