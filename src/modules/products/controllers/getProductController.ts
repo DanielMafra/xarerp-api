@@ -15,6 +15,10 @@ export const getAll = async (req: Request, res: Response) => {
     let returnedProducts = [];
     returnedProducts.push(products[0]);
 
+    const formatValidity = (validity: Date) => {
+      return `${validity.getUTCFullYear()}-${(validity.getUTCMonth() + 1).toString().padStart(2, '0')}-${validity.getUTCDate().toString().padStart(2, '0')}`;
+    }
+
     for (let i = 0; i < products[1].length; i++) {
       newArray.push({
         id: products[1][i].id,
@@ -39,7 +43,7 @@ export const getAll = async (req: Request, res: Response) => {
         user_id: products[1][i].user_id,
         user: products[1][i].user.name,
         lot: products[1][i].lot,
-        validity: products[1][i].validity,
+        validity: formatValidity(products[1][i].validity),
         quantity: products[1][i].quantity,
         created_at: products[1][i].created_at,
         updated_at: products[1][i].updated_at,
