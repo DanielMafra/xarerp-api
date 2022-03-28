@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { getUserService } from '../../users/services/getUserService';
+import { createDashboard } from '../../../helpers/createDashboard';
 
 export const getData = async (req: Request, res: Response) => {
   try {
@@ -10,18 +11,9 @@ export const getData = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Not found' });
     }
 
-    switch (user.position) {
-      case 'Administração':
-        break;
-      case 'Financeiro':
-        break;
-      case 'Vendas':
-        break;
-      case 'Depósito':
-        break;
-    }
+    const result = await createDashboard(user.position);
 
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({ result });
   } catch (err) {
     console.log(err)
     return res.status(500).json({ error: 'InternalServerError' });
