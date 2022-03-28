@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import dashboardRouter from './dashboard';
 import carriersRouter from './carriers';
 import categoriesRouter from './categories';
 import clientsRouter from './clients';
@@ -15,6 +16,7 @@ import usersRouter from './users';
 
 const routes = Router();
 
+routes.use('/v1/dashboard', dashboardRouter);
 routes.use('/v1/carriers', carriersRouter);
 routes.use('/v1/categories', categoriesRouter);
 routes.use('/v1/clients', clientsRouter);
