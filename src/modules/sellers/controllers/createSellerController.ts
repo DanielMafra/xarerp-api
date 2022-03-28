@@ -5,9 +5,9 @@ import { v4 as uuidV4 } from 'uuid';
 
 export const create = async (req: Request, res: Response) => {
   try {
-    const { user, comission } = req.body;
+    const { user, commission } = req.body;
 
-    if (!user || !comission) {
+    if (!user || !commission) {
       return res.status(400).json({ error: 'Incomplete data' });
     }
 
@@ -19,7 +19,7 @@ export const create = async (req: Request, res: Response) => {
 
     const seller = await createSellerService.create({
       id: uuidV4(),
-      comission,
+      commission,
       user
     });
 

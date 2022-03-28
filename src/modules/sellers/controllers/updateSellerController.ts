@@ -6,9 +6,9 @@ import { getUserService } from '../../users/services/getUserService';
 export const updateOne = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { comission, user } = req.body;
+    const { commission, user } = req.body;
 
-    if (!comission && !user) {
+    if (!commission && !user) {
       return res.status(400).json({ error: 'Incomplete data' });
     }
 
@@ -32,7 +32,7 @@ export const updateOne = async (req: Request, res: Response) => {
       id,
       data: {
         user_id: user,
-        comission
+        commission
       },
       time
     });

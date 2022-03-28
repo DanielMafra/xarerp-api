@@ -20,8 +20,8 @@ export const getAll = async (req: Request, res: Response) => {
         id: sellers[1][i].id,
         user_id: sellers[1][i].user_id,
         user: sellers[1][i].user.name,
-        comission: sellers[1][i].commission,
-        comission_formatted: `${sellers[1][i].commission}%`,
+        commission: sellers[1][i].commission,
+        commission_formatted: `${sellers[1][i].commission}%`,
         created_at: sellers[1][i].created_at,
         updated_at: sellers[1][i].updated_at,
       })
