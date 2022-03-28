@@ -36,7 +36,11 @@ export const updateOne = async (req: Request, res: Response) => {
     }
 
     const time = new Date().toISOString();
-    const hashPassword = await hash(password, 10);
+    let hashPassword = undefined;
+
+    if (password) {
+      hashPassword = await hash(password, 10);
+    }
 
     const userUpdated = await updateUserService.update({
       id,

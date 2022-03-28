@@ -11,6 +11,7 @@ const sellersRouter = Router();
 
 sellersRouter.post('/', can("create_seller"), createSellerController.create);
 sellersRouter.get('/', can("view_seller"), getSellerController.getAll);
+sellersRouter.get('/get/', can("get_sellers"), getSellerController.getRegisters);
 sellersRouter.get('/:id', can("view_seller"), getSellerController.getOne);
 sellersRouter.put('/:id', can("update_seller"), updateSellerController.updateOne);
 sellersRouter.delete('/:id', can("delete_seller"), deleteSellerController.deleteOne);

@@ -36,7 +36,8 @@ export const updateOne = async (req: Request, res: Response) => {
       id,
       data: {
         type,
-        unity_id: unity
+        unity_id: unity,
+        value
       },
       time
     });

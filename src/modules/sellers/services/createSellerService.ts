@@ -8,7 +8,7 @@ export const createSellerService = {
     return await prisma.seller.create({
       data: {
         id: data.id,
-        commission: data.comission,
+        commission: data.commission,
         user: {
           connect: {
             id: data.user

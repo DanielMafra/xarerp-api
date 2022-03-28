@@ -9,10 +9,10 @@ import * as deleteFinancialController from '../modules/financial/controllers/del
 
 const financialRouter = Router();
 
-financialRouter.post('/registers', can("create_register"), createFinancialController.create);
-financialRouter.get('/registers', can("view_register"), getFinancialController.getAll);
-financialRouter.get('/registers/:id', can("view_register"), getFinancialController.getOne);
-financialRouter.put('/registers/:id', can("update_register"), updateFinancialController.updateOne);
-financialRouter.delete('/registers/:id', can("delete_register"), deleteFinancialController.deleteOne);
+financialRouter.post('/registers', can("create_financial"), createFinancialController.create);
+financialRouter.get('/registers', can("view_financial"), getFinancialController.getAll);
+financialRouter.get('/registers/:id', can("view_financial"), getFinancialController.getOne);
+financialRouter.put('/registers/:id', can("update_financial"), updateFinancialController.updateOne);
+financialRouter.delete('/registers/:id', can("delete_financial"), deleteFinancialController.deleteOne);
 
 export default financialRouter;

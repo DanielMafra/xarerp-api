@@ -11,6 +11,7 @@ const categoriesRouter = Router();
 
 categoriesRouter.post('/', can("create_category"), createCategoryController.create);
 categoriesRouter.get('/', can("view_category"), getCategoryController.getAll);
+categoriesRouter.get('/get/', can("get_categories"), getCategoryController.getRegisters);
 categoriesRouter.get('/:id', can("view_category"), getCategoryController.getOne);
 categoriesRouter.put('/:id', can("update_category"), updateCategoryController.updateOne);
 categoriesRouter.delete('/:id', can("delete_category"), deleteCategoryController.deleteOne);

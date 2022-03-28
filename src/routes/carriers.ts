@@ -11,6 +11,7 @@ const carriersRouter = Router();
 
 carriersRouter.post('/', can("create_carrier"), createCarrierController.create);
 carriersRouter.get('/', can("view_carrier"), getCarrierController.getAll);
+carriersRouter.get('/get/', can("get_carriers"), getCarrierController.getRegisters);
 carriersRouter.get('/:id', can("view_carrier"), getCarrierController.getOne);
 carriersRouter.put('/:id', can("update_carrier"), updateCarrierController.updateOne);
 carriersRouter.delete('/:id', can("delete_carrier"), deleteCarrierController.deleteOne);

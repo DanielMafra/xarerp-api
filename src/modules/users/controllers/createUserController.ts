@@ -26,8 +26,28 @@ export const create = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'E-mail already exists' });
     }
 
+    const adminCanGets = ['get_stores', 'get_categories', 'get_providers', 'get_products', 'get_clients', 'get_sellers', 'get_carriers', 'get_users'];
+    const finanCanGets = ['get_stores'];
+    const saleCanGets = ['get_products', 'get_stores', 'get_clients', 'get_sellers', 'get_carriers'];
+    const prodCanGets = ['get_categories', 'get_stores', 'get_providers'];
+
     const newPermissions = permissions.split(',');
     newPermissions.push('view_dashboard');
+
+    switch (position) {
+      case 'Administração':
+        newPermissions.push(...adminCanGets);
+        break;
+      case 'Financeiro':
+        newPermissions.push(...finanCanGets);
+        break;
+      case 'Vendas':
+        newPermissions.push(...saleCanGets);
+        break;
+      case 'Depósito':
+        newPermissions.push(...prodCanGets)
+        break;
+    }
 
     const hashPassword = await hash(password, 10);
 

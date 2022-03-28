@@ -11,6 +11,7 @@ const productsRouter = Router();
 
 productsRouter.post('/', can("create_product"), createProductController.create);
 productsRouter.get('/', can("view_product"), getProductController.getAll);
+productsRouter.get('/get/', can("get_products"), getProductController.getRegisters);
 productsRouter.get('/:id', can("view_product"), getProductController.getOne);
 productsRouter.put('/:id', can("update_product"), updateProductController.updateOne);
 productsRouter.delete('/:id', can("delete_product"), deleteProductController.deleteOne);

@@ -11,6 +11,7 @@ const storesRouter = Router();
 
 storesRouter.post('/', can("create_store"), createStoreController.create);
 storesRouter.get('/', can("view_store"), getStoreController.getAll);
+storesRouter.get('/get/', can("get_stores"), getStoreController.getRegisters);
 storesRouter.get('/:id', can("view_store"), getStoreController.getOne);
 storesRouter.put('/:id', can("update_store"), updateStoreController.updateOne);
 storesRouter.delete('/:id', can("delete_store"), deleteStoreController.deleteOne);

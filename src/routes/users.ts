@@ -11,6 +11,7 @@ const usersRouter = Router();
 
 usersRouter.post('/', can("create_user"), createUserController.create);
 usersRouter.get('/', can("view_user"), getUserController.getAll);
+usersRouter.get('/get/', can("get_users"), getUserController.getRegisters);
 usersRouter.get('/:id', can("view_user"), getUserController.getOne);
 usersRouter.put('/:id', can("update_user"), updateUserController.updateOne);
 usersRouter.delete('/:id', can("delete_user"), deleteUserController.deleteOne);

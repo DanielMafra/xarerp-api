@@ -11,6 +11,7 @@ const providersRouter = Router();
 
 providersRouter.post('/', can("create_provider"), createProviderController.create);
 providersRouter.get('/', can("view_provider"), getProviderController.getAll);
+providersRouter.get('/get/', can("get_providers"), getProviderController.getRegisters);
 providersRouter.get('/:id', can("view_provider"), getProviderController.getOne);
 providersRouter.put('/:id', can("update_provider"), updateProviderController.updateOne);
 providersRouter.delete('/:id', can("delete_provider"), deleteProviderController.deleteOne);

@@ -11,6 +11,7 @@ const clientsRouter = Router();
 
 clientsRouter.post('/', can("create_client"), createClientController.create);
 clientsRouter.get('/', can("view_client"), getClientController.getAll);
+clientsRouter.get('/get/', can("get_clients"), getClientController.getRegisters);
 clientsRouter.get('/:id', can("view_client"), getClientController.getOne);
 clientsRouter.put('/:id', can("update_client"), updateClientController.updateOne);
 clientsRouter.delete('/:id', can("delete_client"), deleteClientController.deleteOne);
