@@ -4,6 +4,7 @@ import { getStoreService } from '../../stores/services/getStoreService';
 import { getClientService } from '../../clients/services/getClientService';
 import { getSellerService } from '../../sellers/services/getSellerService';
 import { getCarrierService } from '../../carriers/services/getCarrierService';
+import { updateProductService } from '../../products/services/updateProductService';
 import { createSaleService } from '../services/createSaleService';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -58,6 +59,16 @@ export const create = async (req: Request, res: Response) => {
     if (!sale) {
       return res.status(500).json({ error: 'Internal server error' });
     }
+
+    const time = new Date().toISOString();
+
+    await updateProductService.update({
+      id: hasProduct.id,
+      data: {
+        sold_amount: hasProduct.sold_amount + 1
+      },
+      time
+    });
 
     return res.status(201).json({ sale });
   } catch (err) {

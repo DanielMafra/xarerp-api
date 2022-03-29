@@ -21,7 +21,8 @@ export type UpdateProduct = {
   category_id?: string;
   unity_id?: string;
   provider_id?: string;
-  lot: number;
-  validity: Date;
-  quantity: number;
+  lot?: number;
+  validity?: Date;
+  quantity?: number;
+  sold_amount?: number;
 }

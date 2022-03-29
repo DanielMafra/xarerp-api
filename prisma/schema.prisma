@@ -8,11 +8,12 @@ datasource db {
 }
 
 model Category {
-  id         String   @id @default(uuid())
-  title      String   @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-  products Product[]
+  id         String    @id @default(uuid())
+  title      String    @unique
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  products   Product[]
+
   @@map("categories")
 }
 
@@ -22,61 +23,65 @@ model Carrier {
   region     String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-  sales Sale[]
+  sales      Sale[]
+
   @@map("carriers")
 }
 
 model Store {
-  id         String   @id @default(uuid())
+  id         String      @id @default(uuid())
   name       String
   type       String
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-  users     User[]
-  products  Product[]
-  clients   Client[]
-  tickets   Ticket[]
-  financial Financial[]
-  purchases Purchase[]
-  sales     Sale[]
+  created_at DateTime    @default(now())
+  updated_at DateTime    @default(now())
+  users      User[]
+  products   Product[]
+  clients    Client[]
+  tickets    Ticket[]
+  financial  Financial[]
+  purchases  Purchase[]
+  sales      Sale[]
+
   @@map("stores")
 }
 
 model Provider {
-  id         String   @id @default(uuid())
+  id         String     @id @default(uuid())
   name       String
-  email      String   @unique
-  tel        String   @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-  products  Product[]
-  purchases Purchase[]
+  email      String     @unique
+  tel        String     @unique
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
+  products   Product[]
+  purchases  Purchase[]
+
   @@map("providers")
 }
 
 model User {
-  id          String   @id @default(uuid())
+  id          String      @id @default(uuid())
   name        String
-  email       String   @unique
+  email       String      @unique
   password    String
   unity_id    String
   position    String
   permissions String
   active      Boolean
-  created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
-  unity Store @relation(fields: [unity_id], references: [id], onDelete: Cascade)
-  products  Product[]
-  sellers   Seller[]
-  clients   Client[]
-  tickets   Ticket[]
-  financial Financial[]
-  purchases Purchase[]
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @default(now())
+  unity       Store       @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  products    Product[]
+  sellers     Seller[]
+  clients     Client[]
+  tickets     Ticket[]
+  financial   Financial[]
+  purchases   Purchase[]
+
   @@map("users")
 }
 
 model Product {
-  id             String   @id @default(uuid())
+  id             String     @id @default(uuid())
   name           String
   description    String
   purchase_price Int
@@ -88,14 +93,16 @@ model Product {
   lot            Int
   validity       DateTime
   quantity       Int
-  created_at     DateTime @default(now())
-  updated_at     DateTime @default(now())
-  category Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
-  unity    Store    @relation(fields: [unity_id], references: [id], onDelete: Cascade)
-  provider Provider @relation(fields: [provider_id], references: [id], onDelete: Cascade)
-  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  purchases Purchase[]
-  sales     Sale[]
+  sold_amount    Int        @default(0)
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @default(now())
+  category       Category   @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  unity          Store      @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  provider       Provider   @relation(fields: [provider_id], references: [id], onDelete: Cascade)
+  user           User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  purchases      Purchase[]
+  sales          Sale[]
+
   @@map("products")
 }
 
@@ -105,8 +112,9 @@ model Seller {
   commission Int
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  sales Sale[]
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  sales      Sale[]
+
   @@map("sellers")
 }
 
@@ -122,9 +130,10 @@ model Client {
   unity_id   String
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  unity Store @relation(fields: [unity_id], references: [id], onDelete: Cascade)
-  sales Sale[]
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  unity      Store    @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  sales      Sale[]
+
   @@map("clients")
 }
 
@@ -137,8 +146,9 @@ model Ticket {
   status      Int
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
-  unity Store @relation(fields: [unity_id], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  unity       Store    @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
   @@map("tickets")
 }
 
@@ -150,8 +160,9 @@ model Financial {
   value      Int
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-  unity Store @relation(fields: [unity_id], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  unity      Store    @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
   @@map("financial")
 }
 
@@ -166,10 +177,11 @@ model Purchase {
   status      Int
   created_at  DateTime @default(now())
   updated_at  DateTime @default(now())
-  user     User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  unity    Store    @relation(fields: [unity_id], references: [id], onDelete: Cascade)
-  provider Provider @relation(fields: [provider_id], references: [id], onDelete: Cascade)
-  product  Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  unity       Store    @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  provider    Provider @relation(fields: [provider_id], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
   @@map("purchases")
 }
 
@@ -183,10 +195,11 @@ model Sale {
   status     Int
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-  product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
-  unity   Store   @relation(fields: [unity_id], references: [id], onDelete: Cascade)
-  client  Client  @relation(fields: [client_id], references: [id], onDelete: Cascade)
-  seller  Seller  @relation(fields: [seller_id], references: [id], onDelete: Cascade)
-  carrier Carrier @relation(fields: [carrier_id], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  unity      Store    @relation(fields: [unity_id], references: [id], onDelete: Cascade)
+  client     Client   @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  seller     Seller   @relation(fields: [seller_id], references: [id], onDelete: Cascade)
+  carrier    Carrier  @relation(fields: [carrier_id], references: [id], onDelete: Cascade)
+
   @@map("sales")
 }
