@@ -8,6 +8,18 @@ type Sales = {
   date: Date;
 }
 
+type SalesDefaultStore = {
+  purchase_price: number;
+  sale_price: number;
+  date: Date;
+}
+
+type SalesRankingStores = {
+  name: string;
+  type: string;
+  profit: number;
+}
+
 export const createDashboard = async (type: string) => {
   const result = {
     sales: {},
@@ -100,11 +112,56 @@ export const createDashboard = async (type: string) => {
     resultPurchases.totalSpend += item.quantity * item.unit_price;
   })
 
+  //SALES DEFAULT STORE AND TOP 5 STORES
+  const getDefaultStores = await getDashboardService.findSalesDefaultStore('2022-03-28', 'Matriz');
+  const getOtherStores = await getDashboardService.findSalesOtherStores('2022-03-28');
+  const resultStores = {
+    default: [] as SalesDefaultStore[],
+    productsPurchaseValue: 0,
+    productsSaleValue: 0,
+    profit: 0,
+    ranking: [] as SalesRankingStores[],
+  }
+
+  getDefaultStores.map((item) => {
+    resultStores.default.push({
+      purchase_price: item.product.purchase_price,
+      sale_price: item.product.sale_price,
+      date: item.product.updated_at
+    });
+    resultStores.productsSaleValue += item.product.sale_price;
+    resultStores.productsPurchaseValue += item.product.purchase_price;
+  });
+
+  resultStores.profit = resultStores.productsSaleValue - resultStores.productsPurchaseValue;
+
+  getOtherStores.map((item) => {
+    let findIndex = resultStores.ranking.findIndex((store) => store.name === item.unity.name);
+    if (findIndex > -1) {
+      resultStores.ranking[findIndex].profit += item.product.sale_price - item.product.purchase_price;
+    } else {
+      resultStores.ranking.push({
+        name: item.unity.name,
+        type: item.unity.type,
+        profit: item.product.sale_price - item.product.purchase_price
+      });
+    }
+  });
+
+  resultStores.ranking.sort((a, b) => {
+    return a.profit + b.profit;
+  });
+
+  if (resultStores.ranking.length > 5) {
+    resultStores.ranking = resultStores.ranking.slice(0, 5);
+  }
+
   //RESULTS
   result.sales = resultSales;
   result.products = resultProducts;
   result.financial = resultFinancial;
   result.purchases = resultPurchases;
+  result.stores = resultStores;
 
   return result;
 }
