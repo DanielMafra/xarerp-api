@@ -20,6 +20,18 @@ type SalesRankingStores = {
   profit: number;
 }
 
+type ClientRankingByValue = {
+  name: string;
+  unity: string;
+  value: number;
+}
+
+type ClientRankingByRecorrence = {
+  name: string;
+  unity: string;
+  recorrence: number;
+}
+
 export const createDashboard = async (type: string) => {
   const result = {
     sales: {},
@@ -156,12 +168,52 @@ export const createDashboard = async (type: string) => {
     resultStores.ranking = resultStores.ranking.slice(0, 5);
   }
 
+  //TOP 5 CLIENTS
+  const getClients = await getDashboardService.findClients('2022-03-28');
+  let list = [] as any;
+  const resultClients = {
+    rankingByValue: [] as ClientRankingByValue[],
+    rankingByRecorrence: [] as ClientRankingByRecorrence[]
+  }
+
+  getClients.map((item) => {
+    let findIndex = list.findIndex((client: any) => client.name === item.client.name);
+    if (findIndex > -1) {
+      list[findIndex].value += item.product.sale_price;
+      list[findIndex].recorrence += 1;
+    } else {
+      list.push({
+        name: item.client.name,
+        unity: item.unity.name,
+        value: item.product.sale_price,
+        recorrence: 1
+      });
+    }
+  });
+
+  resultClients.rankingByValue = list.sort((a: any, b: any) => {
+    return a.value + b.value;
+  });
+
+  resultClients.rankingByRecorrence = list.sort((a: any, b: any) => {
+    return a.recorrence + b.recorrence;
+  });
+
+  if (resultClients.rankingByValue.length > 5) {
+    resultClients.rankingByValue = resultClients.rankingByValue.slice(0, 5);
+  }
+
+  if (resultClients.rankingByRecorrence.length > 5) {
+    resultClients.rankingByRecorrence = resultClients.rankingByRecorrence.slice(0, 5);
+  }
+
   //RESULTS
   result.sales = resultSales;
   result.products = resultProducts;
   result.financial = resultFinancial;
   result.purchases = resultPurchases;
   result.stores = resultStores;
+  result.clients = resultClients;
 
   return result;
 }

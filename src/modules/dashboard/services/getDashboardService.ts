@@ -122,4 +122,32 @@ export const getDashboardService = {
       }
     });
   },
+
+  //CLIENTS
+  findClients: async (minDate: string) => {
+    return await prisma.sale.findMany({
+      where: {
+        updated_at: {
+          gte: new Date(minDate)
+        }
+      },
+      select: {
+        client: {
+          select: {
+            name: true
+          }
+        },
+        unity: {
+          select: {
+            name: true
+          }
+        },
+        product: {
+          select: {
+            sale_price: true
+          }
+        }
+      }
+    });
+  },
 }
