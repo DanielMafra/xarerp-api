@@ -2,10 +2,8 @@ import { prisma } from "../database/prismaClient";
 import { getDashboardService } from "../modules/dashboard/services/getDashboardService";
 
 type Sales = {
-  purchase_price: number;
-  sale_price: number;
-  name: string;
-  date: Date;
+  date: string;
+  quantitySales: number;
 }
 
 type SalesDefaultStore = {
@@ -52,6 +50,7 @@ export const createDashboard = async (type: string) => {
 
   //SALES IN THE LAST 7 DAYS
   const getSales = await getDashboardService.findSales('2022-03-28');
+  let listBySales: Sales[] = [];
   const resultSales = {
     list: [] as Sales[],
     invested: 0,
@@ -60,12 +59,23 @@ export const createDashboard = async (type: string) => {
   }
 
   getSales.map((item) => {
-    resultSales.list.push({
-      purchase_price: item.product.purchase_price,
-      sale_price: item.product.sale_price,
-      name: item.product.name,
-      date: item.updated_at
+    let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
+    listBySales.push({
+      date: formattedDate,
+      quantitySales: 1
     })
+  });
+
+  listBySales.map((item) => {
+    let findIndex = resultSales.list.findIndex((dateSale) => dateSale.date === item.date);
+    if (findIndex > -1) {
+      resultSales.list[findIndex].quantitySales += 1;
+    } else {
+      resultSales.list.push({
+        date: item.date,
+        quantitySales: item.quantitySales
+      });
+    }
   });
 
   getSales.map((item) => {
