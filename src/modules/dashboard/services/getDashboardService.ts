@@ -24,13 +24,8 @@ export const getDashboardService = {
   },
 
   //PRODUCTS
-  findProducts: async (minDate: string, quantity: number) => {
+  findProducts: async (quantity: number) => {
     return await prisma.product.findMany({
-      where: {
-        updated_at: {
-          gte: new Date(minDate)
-        }
-      },
       select: {
         purchase_price: true,
         sale_price: true,
@@ -45,4 +40,19 @@ export const getDashboardService = {
     });
   },
 
+  //FINANCIAL
+  findFinancial: async (minDate: string) => {
+    return await prisma.financial.findMany({
+      where: {
+        updated_at: {
+          gte: new Date(minDate)
+        }
+      },
+      select: {
+        type: true,
+        value: true,
+        updated_at: true
+      }
+    });
+  },
 }
