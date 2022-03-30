@@ -47,8 +47,7 @@ export const createDashboard = async (type: string) => {
     stores: {},
     clients: {},
     sellers: {},
-    carriers: {},
-    providers: {}
+    carriers: {}
   };
 
   //SALES IN THE LAST 7 DAYS
@@ -240,6 +239,55 @@ export const createDashboard = async (type: string) => {
     resultSellers.list = resultSellers.list.slice(0, 5);
   }
 
+  //TOP 5 CARRIERS
+  const getCarriers = await getDashboardService.findCarriers('2022-03-28');
+  let listByCarriers = [] as any;
+  let listByRegions = [] as any;
+  const resultCarriers = {
+    rankingByCarriers: [],
+    rankingByRegions: []
+  }
+
+  getCarriers.map((item) => {
+    let findIndex = listByCarriers.findIndex((carrier: any) => carrier.name === item.carrier.name);
+    if (findIndex > -1) {
+      listByCarriers[findIndex].quantity += 1;
+    } else {
+      listByCarriers.push({
+        name: item.carrier.name,
+        quantity: 1
+      });
+    }
+  });
+
+  getCarriers.map((item) => {
+    let findIndex = listByRegions.findIndex((region: any) => region.region === item.carrier.region);
+    if (findIndex > -1) {
+      listByRegions[findIndex].quantity += 1;
+    } else {
+      listByRegions.push({
+        region: item.carrier.region,
+        quantity: 1
+      });
+    }
+  });
+
+  resultCarriers.rankingByCarriers = listByCarriers.sort((a: any, b: any) => {
+    return a.quantity + b.quantity;
+  });
+
+  resultCarriers.rankingByRegions = listByRegions.sort((a: any, b: any) => {
+    return a.quantity + b.quantity;
+  });
+
+  if (resultCarriers.rankingByCarriers.length > 5) {
+    resultCarriers.rankingByCarriers = resultCarriers.rankingByCarriers.slice(0, 5);
+  }
+
+  if (resultCarriers.rankingByRegions.length > 5) {
+    resultCarriers.rankingByRegions = resultCarriers.rankingByRegions.slice(0, 5);
+  }
+
   //RESULTS
   result.sales = resultSales;
   result.products = resultProducts;
@@ -248,6 +296,7 @@ export const createDashboard = async (type: string) => {
   result.stores = resultStores;
   result.clients = resultClients;
   result.sellers = resultSellers;
+  result.carriers = resultCarriers;
 
   return result;
 }
