@@ -87,10 +87,24 @@ export const createDashboard = async (type: string) => {
 
   resultFinancial.difference = resultFinancial.totalEntries - resultFinancial.totalOutputs;
 
+  //PURCHASES IN THE LAST 7 DAYS
+  const getPurchases = await getDashboardService.findPurchases('2022-03-28');
+  const resultPurchases = {
+    list: {},
+    totalSpend: 0
+  }
+
+  resultPurchases.list = getPurchases;
+
+  getPurchases.map((item) => {
+    resultPurchases.totalSpend += item.quantity * item.unit_price;
+  })
+
   //RESULTS
   result.sales = resultSales;
   result.products = resultProducts;
   result.financial = resultFinancial;
+  result.purchases = resultPurchases;
 
   return result;
 }
