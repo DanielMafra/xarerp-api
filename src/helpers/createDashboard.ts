@@ -32,6 +32,12 @@ type ClientRankingByRecorrence = {
   recorrence: number;
 }
 
+type SellersBySales = {
+  name: string;
+  unity: string;
+  totalSales: number;
+}
+
 export const createDashboard = async (type: string) => {
   const result = {
     sales: {},
@@ -207,6 +213,33 @@ export const createDashboard = async (type: string) => {
     resultClients.rankingByRecorrence = resultClients.rankingByRecorrence.slice(0, 5);
   }
 
+  //TOP 5 SELLERS
+  const getSellers = await getDashboardService.findSellers('2022-03-28');
+  const resultSellers = {
+    list: [] as SellersBySales[]
+  }
+
+  getSellers.map((item) => {
+    let findIndex = resultSellers.list.findIndex((seller) => seller.name === item.seller.user.name);
+    if (findIndex > -1) {
+      resultSellers.list[findIndex].totalSales += 1;
+    } else {
+      resultSellers.list.push({
+        name: item.seller.user.name,
+        unity: item.unity.name,
+        totalSales: 1
+      });
+    }
+  });
+
+  resultSellers.list = resultSellers.list.sort((a: any, b: any) => {
+    return a.totalSales + b.totalSales;
+  });
+
+  if (resultSellers.list.length > 5) {
+    resultSellers.list = resultSellers.list.slice(0, 5);
+  }
+
   //RESULTS
   result.sales = resultSales;
   result.products = resultProducts;
@@ -214,6 +247,7 @@ export const createDashboard = async (type: string) => {
   result.purchases = resultPurchases;
   result.stores = resultStores;
   result.clients = resultClients;
+  result.sellers = resultSellers;
 
   return result;
 }
