@@ -23,6 +23,33 @@ export const getDashboardService = {
     });
   },
 
+  findLastSales: async (minDate: string) => {
+    return await prisma.sale.findMany({
+      where: {
+        updated_at: {
+          gte: new Date(minDate)
+        }
+      },
+      select: {
+        product: {
+          select: {
+            sale_price: true,
+            name: true
+          }
+        },
+        unity: {
+          select: {
+            name: true
+          }
+        }
+      },
+      orderBy: {
+        updated_at: 'desc'
+      },
+      take: 15
+    })
+  },
+
   //PRODUCTS
   findProducts: async (quantity: number) => {
     return await prisma.product.findMany({

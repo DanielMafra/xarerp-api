@@ -6,6 +6,13 @@ type Sales = {
   quantitySales: number;
 }
 
+type LastSales = {
+  price: number,
+  name: string,
+  unity: string,
+  quantity: number;
+}
+
 type SalesDefaultStore = {
   purchase_price: number;
   sale_price: number;
@@ -50,13 +57,24 @@ export const createDashboard = async (type: string) => {
 
   //SALES IN THE LAST 7 DAYS
   const getSales = await getDashboardService.findSales('2022-03-28');
+  const getLastSales = await getDashboardService.findLastSales('2022-03-31');
   let listBySales: Sales[] = [];
   const resultSales = {
     list: [] as Sales[],
+    lastSales: [] as LastSales[],
     invested: 0,
     received: 0,
     profit: 0
   }
+
+  getLastSales.map((item) => {
+    resultSales.lastSales.push({
+      price: item.product.sale_price,
+      name: item.product.name,
+      unity: item.unity.name,
+      quantity: 1
+    })
+  })
 
   getSales.map((item) => {
     let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
