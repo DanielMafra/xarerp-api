@@ -19,6 +19,9 @@ export const getDashboardService = {
           }
         },
         updated_at: true
+      },
+      orderBy: {
+        updated_at: 'asc'
       }
     });
   },
@@ -79,6 +82,9 @@ export const getDashboardService = {
         type: true,
         value: true,
         updated_at: true
+      },
+      orderBy: {
+        updated_at: 'asc'
       }
     });
   },

@@ -13,6 +13,12 @@ type LastSales = {
   quantity: number;
 }
 
+type FinancialData = {
+  date: string;
+  positive: number;
+  negative: number;
+}
+
 type SalesDefaultStore = {
   purchase_price: number;
   sale_price: number;
@@ -120,19 +126,66 @@ export const createDashboard = async (type: string) => {
 
   averageTotalTicket = valueSales / quantitySales;
 
-  resultProducts.list = getProducts;
+  resultProducts.list = getProducts.map((item, index) => {
+    return {
+      name: item.name,
+      sold_amount: item.sold_amount
+    }
+  });
   resultProducts.averageTotalTicket = Math.floor(averageTotalTicket);
 
   //FINANCIAL IN THE LAST 7 DAYS
   const getFinancial = await getDashboardService.findFinancial('2022-03-28');
+  let listFinancial: FinancialData[] = [];
   const resultFinancial = {
-    list: {},
+    list: [] as FinancialData[],
     totalEntries: 0,
     totalOutputs: 0,
     difference: 0
   };
 
-  resultFinancial.list = getFinancial;
+  getFinancial.map((item) => {
+    let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
+    if (item.type === 0) {
+      listFinancial.push({
+        date: formattedDate,
+        negative: -Math.abs(item.value),
+        positive: 0
+      });
+    } else {
+      listFinancial.push({
+        date: formattedDate,
+        negative: 0,
+        positive: item.value
+      });
+    }
+  });
+
+  getFinancial.map((item) => {
+    let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
+    let findIndex = resultFinancial.list.findIndex((financial: any) => financial.date === formattedDate);
+    if (findIndex > -1) {
+      if (item.type === 0) {
+        resultFinancial.list[findIndex].negative += -Math.abs(item.value);
+      } else {
+        resultFinancial.list[findIndex].positive += item.value;
+      }
+    } else {
+      if (item.type === 0) {
+        resultFinancial.list.push({
+          date: formattedDate,
+          negative: -Math.abs(item.value),
+          positive: 0
+        });
+      } else {
+        resultFinancial.list.push({
+          date: formattedDate,
+          negative: 0,
+          positive: item.value
+        });
+      }
+    }
+  });
 
   getFinancial.map((item) => {
     if (item.type === 0) {
