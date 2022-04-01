@@ -29,7 +29,7 @@ type RankingByType = {
   profit: number;
 }
 
-export const createDashboard = async (type: string) => {
+export const createDashboard = async (type: string, targetDate: string) => {
   const result = {
     sales: {},
     products: {},
@@ -38,8 +38,8 @@ export const createDashboard = async (type: string) => {
   };
 
   //SALES IN THE LAST 7 DAYS
-  const getSales = await getDashboardService.findSales('2022-03-28');
-  const getLastSales = await getDashboardService.findLastSales('2022-03-31');
+  const getSales = await getDashboardService.findSales(targetDate);
+  const getLastSales = await getDashboardService.findLastSales(targetDate);
   let listBySales: Sales[] = [];
   const resultSales = {
     list: [] as Sales[],
@@ -95,14 +95,14 @@ export const createDashboard = async (type: string) => {
   let quantitySales = 0;
   let averageTotalTicket = 0;
 
-  getProducts.map((item, index) => {
+  getProducts.map((item) => {
     quantitySales += item.sold_amount;
     valueSales += item.sale_price * item.sold_amount;
   })
 
   averageTotalTicket = valueSales / quantitySales;
 
-  resultProducts.list = getProducts.map((item, index) => {
+  resultProducts.list = getProducts.map((item) => {
     return {
       name: item.name,
       sold_amount: item.sold_amount
@@ -111,7 +111,7 @@ export const createDashboard = async (type: string) => {
   resultProducts.averageTotalTicket = Math.floor(averageTotalTicket);
 
   //FINANCIAL IN THE LAST 7 DAYS
-  const getFinancial = await getDashboardService.findFinancial('2022-03-28');
+  const getFinancial = await getDashboardService.findFinancial(targetDate);
   let listFinancial: FinancialData[] = [];
   const resultFinancial = {
     list: [] as FinancialData[],
@@ -174,7 +174,7 @@ export const createDashboard = async (type: string) => {
   resultFinancial.difference = resultFinancial.totalEntries - resultFinancial.totalOutputs;
 
   //SALES DEFAULT STORE AND TOP 5 STORES
-  const getStores = await getDashboardService.findSalesDefaultStore('2022-03-28');
+  const getStores = await getDashboardService.findSalesDefaultStore(targetDate);
   let formattedRankingByType: RankingByType[] = [];
   let orderRankingByType: RankingByType[] = [];
   const resultStores = {

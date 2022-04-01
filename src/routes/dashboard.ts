@@ -6,6 +6,6 @@ import * as getDashboardController from '../modules/dashboard/controllers/getDas
 
 const dashboardRouter = Router();
 
-dashboardRouter.get('/', can("view_dashboard"), getDashboardController.getData);
+dashboardRouter.get('/:days', can("view_dashboard"), getDashboardController.getData);
 
 export default dashboardRouter;
