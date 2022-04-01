@@ -29,19 +29,12 @@ type RankingByType = {
   profit: number;
 }
 
-type SellersBySales = {
-  name: string;
-  unity: string;
-  totalSales: number;
-}
-
 export const createDashboard = async (type: string) => {
   const result = {
     sales: {},
     products: {},
     financial: {},
     stores: {},
-    sellers: {},
     carriers: {}
   };
 
@@ -239,37 +232,6 @@ export const createDashboard = async (type: string) => {
     }
   });
 
-  //TOP 5 SELLERS
-  const getSellers = await getDashboardService.findSellers('2022-03-28');
-  const resultSellers = {
-    list: [] as SellersBySales[]
-  }
-
-  getSellers.map((item) => {
-    let findIndex = resultSellers.list.findIndex((seller) => seller.name === item.seller.user.name);
-    if (findIndex > -1) {
-      resultSellers.list[findIndex].totalSales += 1;
-    } else {
-      resultSellers.list.push({
-        name: item.seller.user.name,
-        unity: item.unity.name,
-        totalSales: 1
-      });
-    }
-  });
-
-  resultSellers.list = resultSellers.list.sort((a: any, b: any) => {
-    if (a.totalSales === b.totalSales) {
-      return 0;
-    }
-
-    return a.totalSales > b.totalSales ? -1 : 1;
-  });
-
-  if (resultSellers.list.length > 5) {
-    resultSellers.list = resultSellers.list.slice(0, 5);
-  }
-
   //TOP 5 CARRIERS
   const getCarriers = await getDashboardService.findCarriers('2022-03-28');
   let listByCarriers = [] as any;
@@ -332,7 +294,6 @@ export const createDashboard = async (type: string) => {
   result.products = resultProducts;
   result.financial = resultFinancial;
   result.stores = resultStores;
-  result.sellers = resultSellers;
   result.carriers = resultCarriers;
 
   return result;
