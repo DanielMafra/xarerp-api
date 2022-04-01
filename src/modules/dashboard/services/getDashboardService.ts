@@ -89,22 +89,6 @@ export const getDashboardService = {
     });
   },
 
-  //PURCHASES
-  findPurchases: async (minDate: string) => {
-    return await prisma.purchase.findMany({
-      where: {
-        updated_at: {
-          gte: new Date(minDate)
-        }
-      },
-      select: {
-        quantity: true,
-        unit_price: true,
-        updated_at: true
-      }
-    });
-  },
-
   //STORES
   findSalesDefaultStore: async (minDate: string, typeStore: string) => {
     return await prisma.sale.findMany({

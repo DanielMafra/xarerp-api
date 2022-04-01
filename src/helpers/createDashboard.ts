@@ -1,4 +1,3 @@
-import { prisma } from "../database/prismaClient";
 import { getDashboardService } from "../modules/dashboard/services/getDashboardService";
 
 type Sales = {
@@ -54,7 +53,6 @@ export const createDashboard = async (type: string) => {
     sales: {},
     products: {},
     financial: {},
-    purchases: {},
     stores: {},
     clients: {},
     sellers: {},
@@ -196,19 +194,6 @@ export const createDashboard = async (type: string) => {
   });
 
   resultFinancial.difference = resultFinancial.totalEntries - resultFinancial.totalOutputs;
-
-  //PURCHASES IN THE LAST 7 DAYS
-  const getPurchases = await getDashboardService.findPurchases('2022-03-28');
-  const resultPurchases = {
-    list: {},
-    totalSpend: 0
-  }
-
-  resultPurchases.list = getPurchases;
-
-  getPurchases.map((item) => {
-    resultPurchases.totalSpend += item.quantity * item.unit_price;
-  })
 
   //SALES DEFAULT STORE AND TOP 5 STORES
   const getDefaultStores = await getDashboardService.findSalesDefaultStore('2022-03-28', 'Matriz');
@@ -373,7 +358,6 @@ export const createDashboard = async (type: string) => {
   result.sales = resultSales;
   result.products = resultProducts;
   result.financial = resultFinancial;
-  result.purchases = resultPurchases;
   result.stores = resultStores;
   result.clients = resultClients;
   result.sellers = resultSellers;
