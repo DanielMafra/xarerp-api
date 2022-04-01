@@ -90,14 +90,11 @@ export const getDashboardService = {
   },
 
   //STORES
-  findSalesDefaultStore: async (minDate: string, typeStore: string) => {
+  findSalesDefaultStore: async (minDate: string) => {
     return await prisma.sale.findMany({
       where: {
         updated_at: {
           gte: new Date(minDate)
-        },
-        unity: {
-          type: typeStore
         }
       },
       select: {
@@ -105,35 +102,12 @@ export const getDashboardService = {
           select: {
             purchase_price: true,
             sale_price: true,
-            updated_at: true
-          }
-        }
-      }
-    });
-  },
-  findSalesOtherStores: async (minDate: string) => {
-    return await prisma.sale.findMany({
-      where: {
-        updated_at: {
-          gte: new Date(minDate)
-        },
-        NOT: {
-          unity: {
-            type: 'Matriz'
-          }
-        }
-      },
-      select: {
-        product: {
-          select: {
-            purchase_price: true,
-            sale_price: true
           }
         },
         unity: {
           select: {
             type: true,
-            name: true,
+            name: true
           }
         }
       }

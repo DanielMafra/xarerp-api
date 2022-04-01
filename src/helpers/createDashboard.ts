@@ -18,15 +18,14 @@ type FinancialData = {
   negative: number;
 }
 
-type SalesDefaultStore = {
-  purchase_price: number;
-  sale_price: number;
-  date: Date;
+type ProfitByType = {
+  type: string;
+  profit: number;
 }
 
-type SalesRankingStores = {
-  name: string;
+type RankingByType = {
   type: string;
+  name: string;
   profit: number;
 }
 
@@ -196,48 +195,62 @@ export const createDashboard = async (type: string) => {
   resultFinancial.difference = resultFinancial.totalEntries - resultFinancial.totalOutputs;
 
   //SALES DEFAULT STORE AND TOP 5 STORES
-  const getDefaultStores = await getDashboardService.findSalesDefaultStore('2022-03-28', 'Matriz');
-  const getOtherStores = await getDashboardService.findSalesOtherStores('2022-03-28');
+  const getStores = await getDashboardService.findSalesDefaultStore('2022-03-28');
+  let formattedRankingByType: RankingByType[] = [];
+  let orderRankingByType: RankingByType[] = [];
   const resultStores = {
-    default: [] as SalesDefaultStore[],
-    productsPurchaseValue: 0,
-    productsSaleValue: 0,
-    profit: 0,
-    ranking: [] as SalesRankingStores[],
+    profitByType: [] as ProfitByType[],
+    rankingByType: [] as RankingByType[]
   }
 
-  getDefaultStores.map((item) => {
-    resultStores.default.push({
-      purchase_price: item.product.purchase_price,
-      sale_price: item.product.sale_price,
-      date: item.product.updated_at
-    });
-    resultStores.productsSaleValue += item.product.sale_price;
-    resultStores.productsPurchaseValue += item.product.purchase_price;
-  });
-
-  resultStores.profit = resultStores.productsSaleValue - resultStores.productsPurchaseValue;
-
-  getOtherStores.map((item) => {
-    let findIndex = resultStores.ranking.findIndex((store) => store.name === item.unity.name);
+  getStores.map((item) => {
+    let findIndex = formattedRankingByType.findIndex((store: RankingByType) => store.name === item.unity.name);
     if (findIndex > -1) {
-      resultStores.ranking[findIndex].profit += item.product.sale_price - item.product.purchase_price;
+      formattedRankingByType[findIndex].profit += item.product.sale_price - item.product.purchase_price;
     } else {
-      resultStores.ranking.push({
-        name: item.unity.name,
+      formattedRankingByType.push({
         type: item.unity.type,
+        name: item.unity.name,
         profit: item.product.sale_price - item.product.purchase_price
       });
     }
   });
 
-  resultStores.ranking.sort((a, b) => {
-    return a.profit + b.profit;
+  formattedRankingByType.map((item) => {
+    let findIndex = orderRankingByType.findIndex((store: RankingByType) => store.type === item.type);
+    if (findIndex > -1) {
+      if (item.profit > orderRankingByType[findIndex].profit) {
+        orderRankingByType[findIndex].name = item.name
+        orderRankingByType[findIndex].profit = item.profit
+      }
+    } else {
+      orderRankingByType.push({
+        name: item.name,
+        type: item.type,
+        profit: item.profit
+      });
+    }
   });
 
-  if (resultStores.ranking.length > 5) {
-    resultStores.ranking = resultStores.ranking.slice(0, 5);
-  }
+  resultStores.rankingByType = orderRankingByType.sort((a: any, b: any) => {
+    if (a.profit === b.profit) {
+      return 0;
+    }
+
+    return a.profit > b.profit ? -1 : 1;
+  });
+
+  getStores.map((item) => {
+    let findIndex = resultStores.profitByType.findIndex((store: ProfitByType) => store.type === item.unity.type);
+    if (findIndex > -1) {
+      resultStores.profitByType[findIndex].profit += item.product.sale_price - item.product.purchase_price;
+    } else {
+      resultStores.profitByType.push({
+        type: item.unity.type,
+        profit: item.product.sale_price - item.product.purchase_price
+      });
+    }
+  });
 
   //TOP 5 CLIENTS
   const getClients = await getDashboardService.findClients('2022-03-28');
@@ -263,11 +276,19 @@ export const createDashboard = async (type: string) => {
   });
 
   resultClients.rankingByValue = list.sort((a: any, b: any) => {
-    return a.value + b.value;
+    if (a.value === b.value) {
+      return 0;
+    }
+
+    return a.value > b.value ? -1 : 1;
   });
 
   resultClients.rankingByRecorrence = list.sort((a: any, b: any) => {
-    return a.recorrence + b.recorrence;
+    if (a.recorrence === b.recorrence) {
+      return 0;
+    }
+
+    return a.recorrence > b.recorrence ? -1 : 1;
   });
 
   if (resultClients.rankingByValue.length > 5) {
@@ -298,7 +319,11 @@ export const createDashboard = async (type: string) => {
   });
 
   resultSellers.list = resultSellers.list.sort((a: any, b: any) => {
-    return a.totalSales + b.totalSales;
+    if (a.totalSales === b.totalSales) {
+      return 0;
+    }
+
+    return a.totalSales > b.totalSales ? -1 : 1;
   });
 
   if (resultSellers.list.length > 5) {
@@ -339,11 +364,19 @@ export const createDashboard = async (type: string) => {
   });
 
   resultCarriers.rankingByCarriers = listByCarriers.sort((a: any, b: any) => {
-    return a.quantity + b.quantity;
+    if (a.quantity === b.quantity) {
+      return 0;
+    }
+
+    return a.quantity > b.quantity ? -1 : 1;
   });
 
   resultCarriers.rankingByRegions = listByRegions.sort((a: any, b: any) => {
-    return a.quantity + b.quantity;
+    if (a.quantity === b.quantity) {
+      return 0;
+    }
+
+    return a.quantity > b.quantity ? -1 : 1;
   });
 
   if (resultCarriers.rankingByCarriers.length > 5) {
