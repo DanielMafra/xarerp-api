@@ -141,31 +141,4 @@ export const getDashboardService = {
       }
     });
   },
-
-  //SELLERS
-  findSellers: async (minDate: string) => {
-    return await prisma.sale.findMany({
-      where: {
-        updated_at: {
-          gte: new Date(minDate)
-        }
-      },
-      select: {
-        seller: {
-          select: {
-            user: {
-              select: {
-                name: true
-              }
-            }
-          }
-        },
-        unity: {
-          select: {
-            name: true
-          }
-        }
-      }
-    });
-  },
 }
