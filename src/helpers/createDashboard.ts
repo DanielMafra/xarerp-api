@@ -29,18 +29,6 @@ type RankingByType = {
   profit: number;
 }
 
-type ClientRankingByValue = {
-  name: string;
-  unity: string;
-  value: number;
-}
-
-type ClientRankingByRecorrence = {
-  name: string;
-  unity: string;
-  recorrence: number;
-}
-
 type SellersBySales = {
   name: string;
   unity: string;
@@ -53,7 +41,6 @@ export const createDashboard = async (type: string) => {
     products: {},
     financial: {},
     stores: {},
-    clients: {},
     sellers: {},
     carriers: {}
   };
@@ -252,53 +239,6 @@ export const createDashboard = async (type: string) => {
     }
   });
 
-  //TOP 5 CLIENTS
-  const getClients = await getDashboardService.findClients('2022-03-28');
-  let list = [] as any;
-  const resultClients = {
-    rankingByValue: [] as ClientRankingByValue[],
-    rankingByRecorrence: [] as ClientRankingByRecorrence[]
-  }
-
-  getClients.map((item) => {
-    let findIndex = list.findIndex((client: any) => client.name === item.client.name);
-    if (findIndex > -1) {
-      list[findIndex].value += item.product.sale_price;
-      list[findIndex].recorrence += 1;
-    } else {
-      list.push({
-        name: item.client.name,
-        unity: item.unity.name,
-        value: item.product.sale_price,
-        recorrence: 1
-      });
-    }
-  });
-
-  resultClients.rankingByValue = list.sort((a: any, b: any) => {
-    if (a.value === b.value) {
-      return 0;
-    }
-
-    return a.value > b.value ? -1 : 1;
-  });
-
-  resultClients.rankingByRecorrence = list.sort((a: any, b: any) => {
-    if (a.recorrence === b.recorrence) {
-      return 0;
-    }
-
-    return a.recorrence > b.recorrence ? -1 : 1;
-  });
-
-  if (resultClients.rankingByValue.length > 5) {
-    resultClients.rankingByValue = resultClients.rankingByValue.slice(0, 5);
-  }
-
-  if (resultClients.rankingByRecorrence.length > 5) {
-    resultClients.rankingByRecorrence = resultClients.rankingByRecorrence.slice(0, 5);
-  }
-
   //TOP 5 SELLERS
   const getSellers = await getDashboardService.findSellers('2022-03-28');
   const resultSellers = {
@@ -392,7 +332,6 @@ export const createDashboard = async (type: string) => {
   result.products = resultProducts;
   result.financial = resultFinancial;
   result.stores = resultStores;
-  result.clients = resultClients;
   result.sellers = resultSellers;
   result.carriers = resultCarriers;
 
