@@ -168,23 +168,4 @@ export const getDashboardService = {
       }
     });
   },
-
-  //CARRIERS
-  findCarriers: async (minDate: string) => {
-    return await prisma.sale.findMany({
-      where: {
-        updated_at: {
-          gte: new Date(minDate)
-        }
-      },
-      select: {
-        carrier: {
-          select: {
-            name: true,
-            region: true
-          }
-        },
-      }
-    });
-  },
 }
