@@ -39,7 +39,11 @@ export const createDashboard = async (type: string, targetDate: string) => {
 
   //SALES IN THE LAST 7 DAYS
   const getSales = await getDashboardService.findSales(targetDate);
-  const getLastSales = await getDashboardService.findLastSales(targetDate);
+
+  let today = new Date();
+  const todayFormattedDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+
+  const getLastSales = await getDashboardService.findLastSales(todayFormattedDate);
   let listBySales: Sales[] = [];
   const resultSales = {
     list: [] as Sales[],
