@@ -13,10 +13,10 @@ export const getData = async (req: Request, res: Response) => {
     }
 
     let targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() - Number(days));
+    targetDate.setDate(targetDate.getDate() - (Number(days) - 1));
     const formattedDate = `${targetDate.getFullYear()}-${(targetDate.getMonth() + 1).toString().padStart(2, '0')}-${targetDate.getDate().toString().padStart(2, '0')}`;
 
-    const result = await createDashboard(user.position, formattedDate);
+    const result = await createDashboard(user.position, formattedDate, Number(days));
 
     return res.status(200).json({ result });
   } catch (err) {

@@ -1,4 +1,5 @@
 import { getDashboardService } from "../modules/dashboard/services/getDashboardService";
+import { formatDate } from "../utils/dateFormat";
 
 type Sales = {
   date: string;
@@ -29,7 +30,10 @@ type RankingByType = {
   profit: number;
 }
 
-export const createDashboard = async (type: string, targetDate: string) => {
+export const createDashboard = async (type: string, targetDate: string, days: number) => {
+  const currentDate = new Date(targetDate)
+  const currentDateTime = currentDate.getTime();
+  const incrementerDay = 86400000;
   const result = {
     sales: {},
     products: {},
@@ -40,11 +44,29 @@ export const createDashboard = async (type: string, targetDate: string) => {
   //SALES IN THE LAST 7 DAYS
   const getSales = await getDashboardService.findSales(targetDate);
 
+  //=============================
+  let arrayDatesSales: any[] = [];
+
+  for (let i = 0; i < days; i++) {
+    arrayDatesSales.push({
+      date: formatDate(new Date(currentDateTime + (incrementerDay * i))),
+      quantitySales: 0
+    })
+  }
+
+  getSales.map((item) => {
+    let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
+    let findIndex = arrayDatesSales.findIndex((dateSale) => dateSale.date === formattedDate);
+    if (findIndex > -1) {
+      arrayDatesSales[findIndex].quantitySales += 1;
+    }
+  });
+  //==============================
+
   let today = new Date();
   const todayFormattedDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
 
   const getLastSales = await getDashboardService.findLastSales(todayFormattedDate);
-  let listBySales: Sales[] = [];
   const resultSales = {
     list: [] as Sales[],
     lastSales: [] as LastSales[],
@@ -63,31 +85,12 @@ export const createDashboard = async (type: string, targetDate: string) => {
   })
 
   getSales.map((item) => {
-    let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
-    listBySales.push({
-      date: formattedDate,
-      quantitySales: 1
-    })
-  });
-
-  listBySales.map((item) => {
-    let findIndex = resultSales.list.findIndex((dateSale) => dateSale.date === item.date);
-    if (findIndex > -1) {
-      resultSales.list[findIndex].quantitySales += 1;
-    } else {
-      resultSales.list.push({
-        date: item.date,
-        quantitySales: item.quantitySales
-      });
-    }
-  });
-
-  getSales.map((item) => {
     resultSales.invested += item.product.purchase_price;
     resultSales.received += item.product.sale_price;
   });
 
   resultSales.profit = resultSales.received - resultSales.invested;
+  resultSales.list = arrayDatesSales;
 
   //TOP 5 PRODUCTS
   const getProducts = await getDashboardService.findProducts(5);
@@ -116,56 +119,37 @@ export const createDashboard = async (type: string, targetDate: string) => {
 
   //FINANCIAL IN THE LAST 7 DAYS
   const getFinancial = await getDashboardService.findFinancial(targetDate);
-  let listFinancial: FinancialData[] = [];
+
+  //=============================
+  let arrayDatesFinancial: any[] = [];
+
+  for (let i = 0; i < days; i++) {
+    arrayDatesFinancial.push({
+      date: formatDate(new Date(currentDateTime + (incrementerDay * i))),
+      negative: 0,
+      positive: 0
+    })
+  }
+
+  getFinancial.map((item) => {
+    let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
+    let findIndex = arrayDatesFinancial.findIndex((dateSale) => dateSale.date === formattedDate);
+    if (findIndex > -1) {
+      if (item.type === 0) {
+        arrayDatesFinancial[findIndex].negative += -Math.abs(item.value);
+      } else {
+        arrayDatesFinancial[findIndex].positive += item.value;
+      }
+    }
+  });
+  //==============================
+
   const resultFinancial = {
     list: [] as FinancialData[],
     totalEntries: 0,
     totalOutputs: 0,
     difference: 0
   };
-
-  getFinancial.map((item) => {
-    let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
-    if (item.type === 0) {
-      listFinancial.push({
-        date: formattedDate,
-        negative: -Math.abs(item.value),
-        positive: 0
-      });
-    } else {
-      listFinancial.push({
-        date: formattedDate,
-        negative: 0,
-        positive: item.value
-      });
-    }
-  });
-
-  getFinancial.map((item) => {
-    let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
-    let findIndex = resultFinancial.list.findIndex((financial: any) => financial.date === formattedDate);
-    if (findIndex > -1) {
-      if (item.type === 0) {
-        resultFinancial.list[findIndex].negative += -Math.abs(item.value);
-      } else {
-        resultFinancial.list[findIndex].positive += item.value;
-      }
-    } else {
-      if (item.type === 0) {
-        resultFinancial.list.push({
-          date: formattedDate,
-          negative: -Math.abs(item.value),
-          positive: 0
-        });
-      } else {
-        resultFinancial.list.push({
-          date: formattedDate,
-          negative: 0,
-          positive: item.value
-        });
-      }
-    }
-  });
 
   getFinancial.map((item) => {
     if (item.type === 0) {
@@ -176,6 +160,7 @@ export const createDashboard = async (type: string, targetDate: string) => {
   });
 
   resultFinancial.difference = resultFinancial.totalEntries - resultFinancial.totalOutputs;
+  resultFinancial.list = arrayDatesFinancial;
 
   //SALES DEFAULT STORE AND TOP 5 STORES
   const getStores = await getDashboardService.findSalesDefaultStore(targetDate);
