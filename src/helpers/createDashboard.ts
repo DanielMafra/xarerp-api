@@ -3,19 +3,8 @@ import { formatDate } from "../utils/dateFormat";
 
 //===============
 import { getSalesDashboardController } from '../modules/dashboard/controllers/getSalesDashboardController';
+import { getProductsDashboardController } from "../modules/dashboard/controllers/getProductsDashboardController";
 //===============
-
-type Sales = {
-  date: string;
-  quantitySales: number;
-}
-
-type LastSales = {
-  price: number,
-  name: string,
-  unity: string,
-  quantity: number;
-}
 
 type FinancialData = {
   date: string;
@@ -47,32 +36,8 @@ export const createDashboard = async (type: string, targetDate: string, days: nu
 
   //======
   const getSales = await getSalesDashboardController(targetDate, days);
+  const getProducts = await getProductsDashboardController();
   //======
-
-  //TOP 5 PRODUCTS
-  const getProducts = await getDashboardService.findProducts(5);
-  const resultProducts = {
-    list: {},
-    averageTotalTicket: 0
-  };
-  let valueSales = 0;
-  let quantitySales = 0;
-  let averageTotalTicket = 0;
-
-  getProducts.map((item) => {
-    quantitySales += item.sold_amount;
-    valueSales += item.sale_price * item.sold_amount;
-  })
-
-  averageTotalTicket = valueSales / quantitySales;
-
-  resultProducts.list = getProducts.map((item) => {
-    return {
-      name: item.name,
-      sold_amount: item.sold_amount
-    }
-  });
-  resultProducts.averageTotalTicket = Math.floor(averageTotalTicket);
 
   //FINANCIAL IN THE LAST 7 DAYS
   const getFinancial = await getDashboardService.findFinancial(targetDate);
@@ -179,7 +144,7 @@ export const createDashboard = async (type: string, targetDate: string, days: nu
 
   //RESULTS
   result.sales = getSales;
-  result.products = resultProducts;
+  result.products = getProducts;
   result.financial = resultFinancial;
   result.stores = resultStores;
 
