@@ -7,10 +7,10 @@ import { hash } from 'bcrypt';
 
 export const create = async (req: Request, res: Response) => {
   try {
-    const { name, email, unity, position, permissions } = req.body;
+    const { name, email, unity, position } = req.body;
     const password = '1234';
 
-    if (!name || !email || !unity || !position || !permissions) {
+    if (!name || !email || !unity || !position) {
       return res.status(400).json({ error: 'Incomplete data' });
     }
 
@@ -26,26 +26,47 @@ export const create = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'E-mail already exists' });
     }
 
-    const adminCanGets = ['get_stores', 'get_categories', 'get_providers', 'get_products', 'get_clients', 'get_sellers', 'get_carriers', 'get_users'];
-    const finanCanGets = ['get_stores'];
-    const saleCanGets = ['get_products', 'get_stores', 'get_clients', 'get_sellers', 'get_carriers'];
-    const prodCanGets = ['get_categories', 'get_stores', 'get_providers'];
+    const defaultRoles = ['view_dashboard'];
+    const storeRoles = ['view_store', 'create_store', 'update_store', 'delete_store'];
+    const productRoles = ['view_product', 'create_product', 'update_product', 'delete_product'];
+    const clientRoles = ['view_client', 'create_client', 'update_client', 'delete_client'];
+    const saleRoles = ['view_sale', 'create_sale', 'update_sale', 'delete_sale'];
+    const carrierRoles = ['view_carrier', 'create_carrier', 'update_carrier', 'delete_carrier'];
+    const providerRoles = ['view_provider', 'create_provider', 'update_provider', 'delete_provider'];
+    const sellerRoles = ['view_seller', 'create_seller', 'update_seller', 'delete_seller'];
+    const purchaseRoles = ['view_purchase', 'create_purchase', 'update_purchase', 'delete_purchase'];
+    const financialRoles = ['view_financial', 'create_financial', 'update_financial', 'delete_financial'];
+    const userRoles = ['view_user', 'create_user', 'update_user', 'delete_user'];
+    const ticketRoles = ['view_ticket', 'create_ticket', 'update_ticket', 'delete_ticket'];
+    const categoryRoles = ['create_category', 'view_category'];
 
-    const newPermissions = permissions.split(',');
-    newPermissions.push('view_dashboard');
+    const administrationCanGets = ['get_stores', 'get_categories', 'get_providers', 'get_products', 'get_clients', 'get_sellers', 'get_carriers', 'get_users'];
+    const financialCanGets = ['get_stores'];
+    const saleCanGets = ['get_stores', 'get_products', 'get_clients', 'get_sellers', 'get_carriers'];
+    const depositCanGets = ['get_categories', 'get_stores', 'get_providers', 'get_products'];
+
+    const adminPermissions = [...defaultRoles, ...storeRoles, ...productRoles, ...clientRoles, ...saleRoles, ...carrierRoles, ...providerRoles, ...sellerRoles, ...purchaseRoles, ...financialRoles, ...userRoles, ...ticketRoles, ...categoryRoles, ...administrationCanGets];
+
+    const finanPermissions = [...defaultRoles, ...financialRoles, ...ticketRoles, ...financialCanGets];
+
+    const sellerPermissions = [...defaultRoles, ...clientRoles, ...saleRoles, ...ticketRoles, ...saleCanGets];
+
+    const stockPermissions = [...defaultRoles, ...productRoles, ...providerRoles, ...purchaseRoles, ...ticketRoles, ...categoryRoles, ...depositCanGets];
+
+    let userPermissions = '';
 
     switch (position) {
       case 'Administração':
-        newPermissions.push(...adminCanGets);
+        userPermissions = adminPermissions.join(',');
         break;
       case 'Financeiro':
-        newPermissions.push(...finanCanGets);
+        userPermissions = finanPermissions.join(',');
         break;
       case 'Vendas':
-        newPermissions.push(...saleCanGets);
+        userPermissions = sellerPermissions.join(',');
         break;
       case 'Depósito':
-        newPermissions.push(...prodCanGets)
+        userPermissions = stockPermissions.join(',');
         break;
     }
 
@@ -58,7 +79,7 @@ export const create = async (req: Request, res: Response) => {
       password: hashPassword,
       unity,
       position,
-      permissions: newPermissions.join(','),
+      permissions: userPermissions,
       active: true
     });
 
