@@ -192,6 +192,7 @@ model Sale {
   client_id  String
   seller_id  String
   carrier_id String
+  quantity   Int      @default(1)
   status     Int
   created_at DateTime @default(now())
   updated_at DateTime @default(now())

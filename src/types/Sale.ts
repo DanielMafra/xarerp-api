@@ -5,6 +5,7 @@ export type Sale = {
   client: string;
   seller: string;
   carrier: string;
+  quantity: number;
   status: number;
 }
 
@@ -14,5 +15,6 @@ export type UpdateSale = {
   client_id?: string;
   seller_id?: string;
   carrier_id?: string;
+  quantity?: number;
   status?: number;
 }

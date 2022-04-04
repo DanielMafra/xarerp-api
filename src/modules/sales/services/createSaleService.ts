@@ -33,6 +33,7 @@ export const createSaleService = {
             id: data.carrier
           }
         },
+        quantity: data.quantity,
         status: data.status
       }
     });

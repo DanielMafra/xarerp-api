@@ -10,9 +10,9 @@ import { updateSaleService } from '../services/updateSaleService';
 export const updateOne = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { product, unity, client, seller, carrier, status } = req.body;
+    const { product, unity, client, seller, carrier, quantity, status } = req.body;
 
-    if (!product && !unity && !client && !seller && !carrier && status === '') {
+    if (!product && !unity && !client && !seller && !carrier && !quantity && status === '') {
       return res.status(400).json({ error: 'Incomplete data' });
     }
 
@@ -72,6 +72,7 @@ export const updateOne = async (req: Request, res: Response) => {
         client_id: client,
         seller_id: seller,
         carrier_id: carrier,
+        quantity,
         status
       },
       time

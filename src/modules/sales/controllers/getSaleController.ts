@@ -31,6 +31,7 @@ export const getAll = async (req: Request, res: Response) => {
         seller: sales[1][i].seller.user.name,
         carrier_id: sales[1][i].carrier_id,
         carrier: sales[1][i].carrier.name,
+        quantity: sales[1][i].quantity,
         status: sales[1][i].status,
         created_at: sales[1][i].created_at,
         updated_at: sales[1][i].updated_at,

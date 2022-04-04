@@ -10,9 +10,9 @@ import { v4 as uuidV4 } from 'uuid';
 
 export const create = async (req: Request, res: Response) => {
   try {
-    const { product, unity, client, seller, carrier } = req.body;
+    const { product, unity, client, seller, carrier, quantity } = req.body;
 
-    if (!product || !unity || !client || !seller || !carrier) {
+    if (!product || !unity || !client || !seller || !carrier || !quantity) {
       return res.status(400).json({ error: 'Incomplete data' });
     }
 
@@ -53,6 +53,7 @@ export const create = async (req: Request, res: Response) => {
       client,
       seller,
       carrier,
+      quantity,
       status: 0
     });
 
@@ -65,7 +66,7 @@ export const create = async (req: Request, res: Response) => {
     await updateProductService.update({
       id: hasProduct.id,
       data: {
-        sold_amount: hasProduct.sold_amount + 1
+        sold_amount: hasProduct.sold_amount + quantity
       },
       time
     });
