@@ -4,13 +4,8 @@ import { formatDate } from "../utils/dateFormat";
 //===============
 import { getSalesDashboardController } from '../modules/dashboard/controllers/getSalesDashboardController';
 import { getProductsDashboardController } from "../modules/dashboard/controllers/getProductsDashboardController";
+import { getFinancialDashboardController } from "../modules/dashboard/controllers/getFinancialDashboardController";
 //===============
-
-type FinancialData = {
-  date: string;
-  positive: number;
-  negative: number;
-}
 
 type ProfitByType = {
   type: string;
@@ -37,52 +32,8 @@ export const createDashboard = async (type: string, targetDate: string, days: nu
   //======
   const getSales = await getSalesDashboardController(targetDate, days);
   const getProducts = await getProductsDashboardController();
+  const getFinancial = await getFinancialDashboardController(targetDate, days);
   //======
-
-  //FINANCIAL IN THE LAST 7 DAYS
-  const getFinancial = await getDashboardService.findFinancial(targetDate);
-
-  //=============================
-  let arrayDatesFinancial: any[] = [];
-
-  for (let i = 0; i < days; i++) {
-    arrayDatesFinancial.push({
-      date: formatDate(new Date(currentDateTime + (incrementerDay * i))),
-      negative: 0,
-      positive: 0
-    })
-  }
-
-  getFinancial.map((item) => {
-    let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
-    let findIndex = arrayDatesFinancial.findIndex((dateSale) => dateSale.date === formattedDate);
-    if (findIndex > -1) {
-      if (item.type === 0) {
-        arrayDatesFinancial[findIndex].negative += -Math.abs(item.value);
-      } else {
-        arrayDatesFinancial[findIndex].positive += item.value;
-      }
-    }
-  });
-  //==============================
-
-  const resultFinancial = {
-    list: [] as FinancialData[],
-    totalEntries: 0,
-    totalOutputs: 0,
-    difference: 0
-  };
-
-  getFinancial.map((item) => {
-    if (item.type === 0) {
-      resultFinancial.totalOutputs += item.value
-    } else {
-      resultFinancial.totalEntries += item.value
-    }
-  });
-
-  resultFinancial.difference = resultFinancial.totalEntries - resultFinancial.totalOutputs;
-  resultFinancial.list = arrayDatesFinancial;
 
   //SALES DEFAULT STORE AND TOP 5 STORES
   const getStores = await getDashboardService.findSalesDefaultStore(targetDate);
@@ -145,7 +96,7 @@ export const createDashboard = async (type: string, targetDate: string, days: nu
   //RESULTS
   result.sales = getSales;
   result.products = getProducts;
-  result.financial = resultFinancial;
+  result.financial = getFinancial;
   result.stores = resultStores;
 
   return result;
