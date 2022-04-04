@@ -1,5 +1,6 @@
 import { getSalesDashboardService } from "../services/getSalesDashboardService";
 import { formatDate } from "../../../utils/dateFormat";
+import { DashboardProps } from "../../../types/DashboardProps";
 
 type Sales = {
   date: string;
@@ -13,17 +14,13 @@ type LastSales = {
   quantity: number;
 }
 
-export const getSalesDashboardController = async (targetDate: string, days: number): Promise<any> => {
-  const currentDate = new Date(targetDate)
-  const currentDateTime = currentDate.getTime();
-  const incrementerDay = 86400000;
-
-  const getSales = await getSalesDashboardService.findSales(targetDate);
+export const getSalesDashboardController = async ({ targetDate, days, currentDateTime, incrementerDay }: DashboardProps): Promise<any> => {
+  const getSales = await getSalesDashboardService.findSales(targetDate!);
   let arrayDatesSales: any[] = [];
 
-  for (let i = 0; i < days; i++) {
+  for (let i = 0; i < days!; i++) {
     arrayDatesSales.push({
-      date: formatDate(new Date(currentDateTime + (incrementerDay * i))),
+      date: formatDate(new Date(currentDateTime! + (incrementerDay! * i))),
       quantitySales: 0
     })
   }

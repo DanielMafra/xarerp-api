@@ -1,3 +1,4 @@
+import { DashboardProps } from '../../../types/DashboardProps';
 import { getStoresDashboardService } from '../services/getStoresDashboardService';
 
 type ProfitByType = {
@@ -11,8 +12,8 @@ type RankingByType = {
   profit: number;
 }
 
-export const getStoresDashboardController = async (targetDate: string): Promise<any> => {
-  const getStores = await getStoresDashboardService.findSalesDefaultStore(targetDate);
+export const getStoresDashboardController = async ({ targetDate }: DashboardProps): Promise<any> => {
+  const getStores = await getStoresDashboardService.findSalesDefaultStore(targetDate!);
   let formattedRankingByType: RankingByType[] = [];
   let orderRankingByType: RankingByType[] = [];
   const resultStores = {

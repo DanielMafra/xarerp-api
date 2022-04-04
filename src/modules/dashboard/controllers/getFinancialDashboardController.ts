@@ -1,5 +1,6 @@
 import { getFinancialDashboardService } from '../services/getFinancialDashboardService';
 import { formatDate } from '../../../utils/dateFormat';
+import { DashboardProps } from "../../../types/DashboardProps";
 
 type FinancialData = {
   date: string;
@@ -7,17 +8,13 @@ type FinancialData = {
   negative: number;
 }
 
-export const getFinancialDashboardController = async (targetDate: string, days: number): Promise<any> => {
-  const currentDate = new Date(targetDate)
-  const currentDateTime = currentDate.getTime();
-  const incrementerDay = 86400000;
-
-  const getFinancial = await getFinancialDashboardService.findFinancial(targetDate);
+export const getFinancialDashboardController = async ({ targetDate, days, currentDateTime, incrementerDay }: DashboardProps): Promise<any> => {
+  const getFinancial = await getFinancialDashboardService.findFinancial(targetDate!);
   let arrayDatesFinancial: any[] = [];
 
-  for (let i = 0; i < days; i++) {
+  for (let i = 0; i < days!; i++) {
     arrayDatesFinancial.push({
-      date: formatDate(new Date(currentDateTime + (incrementerDay * i))),
+      date: formatDate(new Date(currentDateTime! + (incrementerDay! * i))),
       negative: 0,
       positive: 0
     })
