@@ -1,6 +1,10 @@
 import { getDashboardService } from "../modules/dashboard/services/getDashboardService";
 import { formatDate } from "../utils/dateFormat";
 
+//===============
+import { getSalesDashboardController } from '../modules/dashboard/controllers/getSalesDashboardController';
+//===============
+
 type Sales = {
   date: string;
   quantitySales: number;
@@ -41,56 +45,9 @@ export const createDashboard = async (type: string, targetDate: string, days: nu
     stores: {}
   };
 
-  //SALES IN THE LAST 7 DAYS
-  const getSales = await getDashboardService.findSales(targetDate);
-
-  //=============================
-  let arrayDatesSales: any[] = [];
-
-  for (let i = 0; i < days; i++) {
-    arrayDatesSales.push({
-      date: formatDate(new Date(currentDateTime + (incrementerDay * i))),
-      quantitySales: 0
-    })
-  }
-
-  getSales.map((item) => {
-    let formattedDate = `${item.updated_at.getDate().toString().padStart(2, '0')}/${(item.updated_at.getMonth() + 1).toString().padStart(2, '0')}`;
-    let findIndex = arrayDatesSales.findIndex((dateSale) => dateSale.date === formattedDate);
-    if (findIndex > -1) {
-      arrayDatesSales[findIndex].quantitySales += 1;
-    }
-  });
-  //==============================
-
-  let today = new Date();
-  const todayFormattedDate = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
-
-  const getLastSales = await getDashboardService.findLastSales(todayFormattedDate);
-  const resultSales = {
-    list: [] as Sales[],
-    lastSales: [] as LastSales[],
-    invested: 0,
-    received: 0,
-    profit: 0
-  }
-
-  getLastSales.map((item) => {
-    resultSales.lastSales.push({
-      price: item.product.sale_price,
-      name: item.product.name,
-      unity: item.unity.name,
-      quantity: 1
-    })
-  })
-
-  getSales.map((item) => {
-    resultSales.invested += item.product.purchase_price;
-    resultSales.received += item.product.sale_price;
-  });
-
-  resultSales.profit = resultSales.received - resultSales.invested;
-  resultSales.list = arrayDatesSales;
+  //======
+  const getSales = await getSalesDashboardController(targetDate, days);
+  //======
 
   //TOP 5 PRODUCTS
   const getProducts = await getDashboardService.findProducts(5);
@@ -221,7 +178,7 @@ export const createDashboard = async (type: string, targetDate: string, days: nu
   });
 
   //RESULTS
-  result.sales = resultSales;
+  result.sales = getSales;
   result.products = resultProducts;
   result.financial = resultFinancial;
   result.stores = resultStores;
