@@ -11,6 +11,16 @@ System to manage sales, inventory, employees, stores and more.
 
 This is just the back-end of the application, to have visual references and also get the front-end (created in React), go to: [Xarerp - Client](https://github.com/DanielMafra/xarerp-client)
 
+## Some features
+
+✅ Authentication persistence using jsonwebtoken
+✅ Protected routes
+✅ Routes with access permissions based on the logged in user
+✅ CRUD for each registration functionality
+✅ Rules for not allowing duplicate entries
+✅ Search and pagination filters
+✅ Metrics from the last 7, 15 and 30 days
+
 ## Running the API
 
 After having cloned the repository and accessed its folder through the terminal, run the command below (remember to have installed Node + NPM and PostgreSQL)
